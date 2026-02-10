@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: version
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "version=${TAG#v}" >> $GITHUB_OUTPUT
+
+      - name: Create agents zip
+        run: |
+          cd agents
+          zip -r ../kai-${{ steps.version.outputs.tag }}.zip .
+          cd ..
+
+          # Verify zip contents
+          echo "Contents of kai-${{ steps.version.outputs.tag }}.zip:"
+          unzip -l kai-${{ steps.version.outputs.tag }}.zip
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: kai-${{ steps.version.outputs.tag }}.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

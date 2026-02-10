@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  tester:
+    image: debian:bookworm-slim
+    container_name: kai-integration-test
+    volumes:
+      - ./:/workspace:cached
+    working_dir: /workspace
+    entrypoint: ["bash", "/workspace/tests/integration/run_tests.sh"]
+    tty: true
+    stdin_open: false
+    restart: "no"
+
