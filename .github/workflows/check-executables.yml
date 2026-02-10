@@ -1,0 +1,20 @@
+name: Check executables
+
+on:
+  push:
+    paths:
+      - "docs/**"
+      - "tests/check_executables.sh"
+  pull_request:
+    paths:
+      - "docs/**"
+      - "tests/check_executables.sh"
+
+jobs:
+  check-executables:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run executable checks
+        run: |
+          bash tests/check_executables.sh
