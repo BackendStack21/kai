@@ -16,9 +16,11 @@ fi
 bad_files_found=false
 bad_files_list=""
 while IFS= read -r -d '' f; do
-  bad_files_found=true
-  bad_files_list+="$f"$'\n'
-done < <(find "$CHECK_DIR" -type f -name '*.sh' ! -perm /111 -print0)
+  if [ ! -x "$f" ]; then
+    bad_files_found=true
+    bad_files_list+="$f"$'\n'
+  fi
+done < <(find "$CHECK_DIR" -type f -name '*.sh' -print0)
 
 if [ "$bad_files_found" = false ]; then
   echo "[PASS] All .sh files under $CHECK_DIR are executable"
