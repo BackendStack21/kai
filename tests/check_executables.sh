@@ -12,17 +12,20 @@ if [ ! -d "$CHECK_DIR" ]; then
   exit 0
 fi
 
-# Find non-executable .sh files
-mapfile -t bad < <(find "$CHECK_DIR" -type f -name '*.sh' ! -perm /111 -print)
+# Find non-executable .sh files (portable across Bash versions)
+bad_files_found=false
+bad_files_list=""
+while IFS= read -r -d '' f; do
+  bad_files_found=true
+  bad_files_list+="$f"$'\n'
+done < <(find "$CHECK_DIR" -type f -name '*.sh' ! -perm /111 -print0)
 
-if [ ${#bad[@]} -eq 0 ]; then
+if [ "$bad_files_found" = false ]; then
   echo "[PASS] All .sh files under $CHECK_DIR are executable"
   exit 0
 fi
 
 echo "[FAIL] The following .sh files are not executable:"
-for f in "${bad[@]}"; do
-  echo "  - $f"
-done
+printf '%s' "$bad_files_list"
 
 exit 1
