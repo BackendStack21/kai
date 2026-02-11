@@ -25,9 +25,7 @@ jobs:
 
       - name: Create agents zip
         run: |
-          cd agents
-          zip -r ../kai-${{ steps.version.outputs.tag }}.zip .
-          cd ..
+          zip -r kai-${{ steps.version.outputs.tag }}.zip agents
 
           # Verify zip contents
           echo "Contents of kai-${{ steps.version.outputs.tag }}.zip:"
