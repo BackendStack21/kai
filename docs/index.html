@@ -369,29 +369,61 @@
 
       /* --- Hero Image Placeholder --- */
       .hero-image-placeholder {
-        background: var(--panel);
-        border: 2px dashed var(--border);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
         border-radius: 16px;
-        padding: 80px 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        z-index: 1;
+        transform: scale(1.1);
+        overflow: hidden;
+      }
+
+      .hero-image-placeholder .cli-header {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .hero-image-placeholder .cli-dots {
+        display: flex;
+        gap: 8px;
+      }
+
+      .hero-image-placeholder .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ef4444;
+      }
+
+      .hero-image-placeholder .dot:nth-child(2) {
+        background: #fbbf24;
+      }
+
+      .hero-image-placeholder .dot:nth-child(3) {
+        background: #10b981;
+      }
+
+      .hero-image-placeholder .cli-title {
+        color: var(--text-dim);
+        font-size: 0.75rem;
+        font-weight: 600;
+        font-family: var(--font-mono);
+      }
+
+      .hero-image-placeholder .cli-body {
+        padding: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 400px;
-        position: relative;
-        z-index: 1;
-        transition: border-color 0.3s;
-      }
-
-      .hero-image-placeholder:hover {
-        border-color: var(--accent);
-      }
-
-      .placeholder-content {
-        text-align: center;
-      }
-
-      .placeholder-content svg {
-        opacity: 0.6;
+        height: 100%;
       }
 
       /* --- Visual CLI --- */
@@ -1014,39 +1046,19 @@
         </div>
 
         <div class="hero-image-placeholder">
-          <div class="placeholder-content">
-            <svg
-              width="120"
-              height="120"
-              viewBox="0 0 120 120"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="Kai installation checkmark icon"
-            >
-              <rect
-                width="120"
-                height="120"
-                rx="12"
-                fill="rgba(0, 217, 255, 0.1)"
-                stroke="rgba(0, 217, 255, 0.3)"
-                stroke-width="2"
-                stroke-dasharray="8 8"
-              />
-              <path
-                d="M40 50L50 60L40 70M55 70H80"
-                stroke="var(--accent)"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <p style="margin-top: 20px; color: var(--text-muted); font-family: var(--font-mono); font-size: 0.85rem">
-              Hero Image Placeholder
-            </p>
-            <p style="margin-top: 8px; color: var(--text-dim); font-size: 0.75rem">
-              Replace with actual screenshot/demo
-            </p>
+          <div class="cli-header">
+            <div class="cli-dots">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+          </div>
+          <div class="cli-body">
+            <img
+              src="assets/hero-image.png"
+              alt="Kai Hero Image"
+              style="width: 100%; height: 100%; object-fit: cover; border-radius: 0"
+            />
           </div>
         </div>
       </header>
