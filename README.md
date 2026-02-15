@@ -38,17 +38,17 @@ curl -fsSL https://kai.21no.de/scripts/installer.sh | bash -s -- latest --yes
 
 ```bash
 # Download and run the installer (replace latest with desired version)
-curl -fsSL https://kai.21no.de/scripts/installer.sh | bash -s -- v1.1.0 --yes
+curl -fsSL https://kai.21no.de/scripts/installer.sh | bash -s -- v1.1.1 --yes
 ```
 
 **If you don't have OpenCode installed yet:**
 
 ```bash
 # The installer can install OpenCode for you
-curl -fsSL https://kai.21no.de/scripts/installer.sh | bash -s -- v1.1.0 --install-opencode --yes
+curl -fsSL https://kai.21no.de/scripts/installer.sh | bash -s -- v1.1.1 --install-opencode --yes
 ```
 
-> **Note:** Replace `v1.0.0` with the desired [release version](https://github.com/BackendStack21/kai/releases). The version can be specified with or without the `v` prefix (e.g., `v1.0.0` or `1.0.0`).
+> **Note:** Replace `v1.1.1` with the desired [release version](https://github.com/BackendStack21/kai/releases). The version can be specified with or without the `v` prefix (e.g., `v1.1.1` or `1.0.0`).
 
 **Installer Options:**
 
