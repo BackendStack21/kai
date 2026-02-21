@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     # Dangerous commands — NEVER execute
     "rm -rf /*": deny
     "sudo *": deny
@@ -402,5 +404,63 @@ No TODO files. No intermediate artifacts. Verification state lives in agent memo
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| Kai | Claim to verify | Fact-check request |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| Kai | Verdict report | Verdict file |
+| @executive-summarizer | Verdict | For summarization |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Deep research needed | @research | Broader investigation |
+| Needs executive brief | @executive-summarizer | Leadership summary |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @fact-check when:
+
+- User requests: "Verify X", "Is Y true?", "Check claim"
+- Specific claims to verify
+- Truth verification
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Gets clear claim to verify
+- Determines verification type
+
+### Context Provided
+
+Kai provides:
+
+- Claim to verify
+- Verification type
+
+### Expected Output
+
+Kai expects:
+
+- Verdict (TRUE/FALSE/etc)
+- Certainty level
+- Sources
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

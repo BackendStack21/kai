@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     # Dangerous commands — NEVER execute
     "rm -rf /*": deny
     "sudo *": deny
@@ -320,5 +322,64 @@ No TODO files. No intermediate artifacts. Research state lives in agent memory u
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| Kai | Research topic, scope | User research request |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| Kai | Research report | Report file |
+| @executive-summarizer | Full report | For summarization |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Fact verification needed | @fact-check | Verify specific claims |
+| Needs executive brief | @executive-summarizer | Leadership summary |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @research when:
+
+- User requests: "Research X", "Investigate Y"
+- Open-ended questions
+- Comparison tasks
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Clarifies research scope
+- Identifies key questions
+
+### Context Provided
+
+Kai provides:
+
+- Research topic
+- Questions to answer
+- Scope (broad/focused)
+
+### Expected Output
+
+Kai expects:
+
+- Research report
+- Sources cited
+- Confidence level
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

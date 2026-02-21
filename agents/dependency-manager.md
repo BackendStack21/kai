@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     "git add *": ask
     "git commit *": ask
     "git push *": ask
@@ -386,5 +388,66 @@ Examples:
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| Kai | Package name, version | Dependency update request |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| Kai | Update report | Structured report |
+| @developer | On escalation | Code changes |
+| @architect | On escalation | Major changes |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Major version change | @architect | Breaking changes |
+| Package replacement | @architect | Architecture decision |
+| Breaking changes | @developer | Code updates needed |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @dependency-manager when:
+
+- User requests: "Update package X", "Security patch"
+- Single package updates
+- Dependency verification
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Confirms package name
+- Specifies target version
+
+### Context Provided
+
+Kai provides:
+
+- Package to update
+- Target version
+- Reason (security, feature, maintenance)
+
+### Expected Output
+
+Kai expects:
+
+- Update applied
+- Tests pass
+- Audit clean
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

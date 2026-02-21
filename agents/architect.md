@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     "git add *": ask
     "git commit *": ask
     "git push *": ask
@@ -496,5 +498,70 @@ HANDOFF_TO_DEVELOPER:
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| @engineering-team | Requirements, constraints, context | Design task assigned |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| @developer | Architecture design, roadmap, ADR | Design document |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Requirements unclear | @engineering-team | Needs clarification |
+| Design infeasible | @engineering-team | Constraint conflict |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @architect when:
+
+- Engineering task requires system design
+- Technology decisions needed
+- Architecture review requested
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Confirms requirements are clear
+- Provides project context
+
+### Context Provided
+
+Kai provides:
+
+- Functional requirements
+- Non-functional requirements
+- Constraints and preferences
+
+### Expected Output
+
+Kai expects:
+
+- System design document
+- Implementation roadmap
+- ADR records
+
+### On Failure
+
+If @architect has issues:
+
+- Request clarification
+- Proceed with assumptions documented
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

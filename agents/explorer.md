@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     # Dangerous commands — NEVER execute
     "rm -rf /*": deny
     "sudo *": deny
@@ -278,5 +280,66 @@ This agent does NOT:
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| Kai | Question, scope | User exploration request |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| Kai | Exploration report | Structured answer |
+| @architect | Architecture context | On escalation |
+| @developer | Code context | On escalation |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Needs code changes | @developer | Modification needed |
+| Needs architecture | @architect | Design decisions |
+| Needs security review | @reviewer | Security concerns |
+| Needs documentation | @docs | Doc generation |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @explorer when:
+
+- User asks: "How does X work?", "Where is Y?", "Find Z"
+- Quick codebase questions
+- Understanding existing code
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Confirms question is exploratory
+- Determines scope
+
+### Context Provided
+
+Kai provides:
+
+- Question to answer
+- Files/paths to explore
+
+### Expected Output
+
+Kai expects:
+
+- Answer with file locations
+- Code snippets
+- Explanation
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

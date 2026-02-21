@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     "git add *": ask
     "git commit *": ask
     "git push *": ask
@@ -615,5 +617,72 @@ const users = await db.users.findMany({
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| @developer | Implementation files, architecture | Code review task |
+| Kai | Focus areas, quality criteria | Review request |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| Kai | Review report, issues found | Structured report |
+| @developer | Required fixes | Issue list |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Security concerns | @security-auditor | Deep security audit |
+| Performance issues | @performance-optimizer | Performance analysis |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @reviewer when:
+
+- Developer completes implementation
+- Code review needed
+- Parallel with @tester and @docs
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Confirms implementation is ready
+- Provides focus areas
+
+### Context Provided
+
+Kai provides:
+
+- Files to review
+- Architecture for compliance
+- Focus areas
+
+### Expected Output
+
+Kai expects:
+
+- Review report with severity
+- Critical issues list
+- Approval status
+
+### On Failure
+
+If @reviewer finds critical issues:
+
+- Return to @developer for fixes
+- Re-review after fixes
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

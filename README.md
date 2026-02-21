@@ -1,6 +1,8 @@
 # Kai: The Universal Brain
 
-## 1. Overview & Vision
+**Version:** 1.2.0
+
+Grea## 1. Overview & Vision
 
 Kai is a **Universal Brain** within the OpenCode agent's ecosystem — a single entry point for intelligent orchestration.
 
@@ -240,6 +242,16 @@ This section is for engineers maintaining the Kai system itself.
 - **Kai Config**: Must be set to `mode: "primary"` and act as the sole decision-maker.
 - **Subagent Config**: All subagents must be set to `mode: "subagent"`. They should only respond to `DIRECTIVE` formats from Kai.
 
+### Agent Specification Standard
+
+All agents MUST follow the specification defined in `TEMPLATE.md`. This ensures consistency across the agent ecosystem. Key requirements include:
+
+- **Required Sections**: Core Principles, Input Requirements, Execution Pipeline, Output Format, Performance Targets, Error Handling, Limitations, Completion Report
+- **Subagent-Only Sections**: When to Use/When to Escalate, How Kai Uses This Agent
+- **Optional Sections**: Agent Interactions, Terminal UX Spec, Quality Checklist
+
+See `TEMPLATE.md` for the full specification template.
+
 ### Communication Protocol
 
 Kai communicates with subagents using structured formats to ensure parsing reliability.
@@ -293,8 +305,9 @@ Agent temperature values control creativity vs. determinism. The ecosystem uses 
 | Temperature | Agents                                                                                                                        | Rationale                                                                                                                             |
 | :---------- | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
 | `0.1`       | @developer, @reviewer, @tester, @devops, @research, @fact-check, @explorer, @quick-reviewer, @dependency-manager, @postmortem | Deterministic tasks — coding, testing, verification. Precision is critical; creativity is not.                                        |
-| `0.2`       | @kai, @engineering-team, @architect, @doc-fixer, @executive-summarizer, @refactor-advisor                                     | Balanced tasks — orchestration, design, analysis. Some creativity needed for problem-solving, prioritization, and persona expression. |
-| `0.3`       | @docs                                                                                                                         | Creative tasks — technical writing. Higher temperature produces more natural, varied prose.                                           |
+| `0.15`      | @performance-optimizer                                                                                                       | Analytical tasks — performance analysis requires measured, data-driven approaches.                                                       |
+| `0.2`       | @kai, @engineering-team, @architect, @doc-fixer, @executive-summarizer, @refactor-advisor, @security-auditor, @integration-specialist | Balanced tasks — orchestration, design, analysis, security. Some creativity needed for problem-solving, prioritization, and persona expression. |
+| `0.3`       | @docs, @accessibility-expert                                                                                                | Creative tasks — technical writing, accessibility design. Higher temperature produces more natural, varied prose.                          |
 
 ### Terminal UX Spec
 
@@ -662,15 +675,19 @@ PIPELINE HEALTH DASHBOARD (Conceptual)
 | `@tester`               | Specialist | Test automation & QA                 | < 20 min    | 45 min   |
 | `@docs`                 | Specialist | Technical writing                    | < 20 min    | 45 min   |
 | `@devops`               | Specialist | CI/CD & Infrastructure               | < 30 min    | 60 min   |
+| `@security-auditor`    | Quality   | Security vulnerability scanning     | < 18 min    | 30 min   |
+| `@performance-optimizer`| Quality   | Performance analysis & optimization | < 19 min    | 35 min   |
+| `@integration-specialist`| Quality   | API design & stub generation        | < 18 min    | 35 min   |
+| `@accessibility-expert` | Quality   | WCAG compliance & accessibility     | < 15 min    | 30 min   |
 | `@research`             | Research   | Deep-dive investigation              | Variable    | Variable |
 | `@fact-check`           | Research   | Claim verification                   | < 15 min    | 30 min   |
-| `@explorer`             | Fast-Track | Codebase exploration & navigation    | < 5 min     | 7 min    |
-| `@quick-reviewer`       | Fast-Track | Small code reviews                   | < 5 min     | 7 min    |
-| `@doc-fixer`            | Fast-Track | Documentation fixes                  | < 5 min     | 7 min    |
+| `@explorer`            | Fast-Track | Codebase exploration & navigation    | < 5 min     | 7 min    |
+| `@quick-reviewer`      | Fast-Track | Small code reviews                   | < 5 min     | 7 min    |
+| `@doc-fixer`           | Fast-Track | Documentation fixes                  | < 5 min     | 7 min    |
 | `@dependency-manager`   | Fast-Track | Package updates                      | < 10 min    | 15 min   |
-| `@postmortem`           | Learning   | Failure analysis & prevention rules  | < 5 min     | 10 min   |
-| `@refactor-advisor`     | Learning   | Tech debt detection & health scoring | < 9 min     | 15 min   |
-| `@executive-summarizer` | Utility    | Leadership briefings                 | < 5 min     | 7 min    |
+| `@postmortem`          | Learning   | Failure analysis & prevention rules  | < 5 min     | 10 min   |
+| `@refactor-advisor`    | Learning   | Tech debt detection & health scoring | < 9 min     | 15 min   |
+| `@executive-summarizer`| Utility    | Leadership briefings                 | < 5 min     | 7 min    |
 
 ---
 
@@ -680,6 +697,7 @@ Each agent file uses semantic versioning independently. The ecosystem version is
 
 ```yaml
 VERSIONING:
+  ecosystem_version: "1.2.0"
   strategy: "Semantic versioning (MAJOR.MINOR.PATCH)"
   scope: "Per-agent + ecosystem-level"
 
@@ -687,6 +705,14 @@ VERSIONING:
     MAJOR: "Breaking changes to handoff schema or agent interface"
     MINOR: "New capabilities, new agents, new sections"
     PATCH: "Bug fixes, typo corrections, clarifications"
+
+  v1.2.0_changes:
+    - "Expanded Quality Agents: @security-auditor, @performance-optimizer, @integration-specialist, @accessibility-expert"
+    - "Added TEMPLATE.md for agent specification standard"
+    - "Added Agent Interactions sections to all agents"
+    - "Added How Kai Uses This Agent sections to all agents"
+    - "Added .kai directory permissions to all agents"
+    - "Standardized version to v1.2.0 across all agents"
 ```
 
 ---

@@ -27,6 +27,10 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
+    # .kai directory - write for postmortems
+    ".kai/postmortems/*": allow
     # Dangerous commands — NEVER execute
     "rm -rf /*": deny
     "sudo *": deny

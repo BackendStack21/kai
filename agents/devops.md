@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     "git add *": ask
     "git commit *": ask
     "git push *": ask
@@ -902,5 +904,66 @@ DEPLOYMENT_READY:
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| Kai | Pipeline completion signal | Deployment task |
+| @reviewer | Code approved | Ready for deployment |
+| @tester | Tests passed | Ready for deployment |
+| @docs | Documentation complete | Ready for deployment |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| Kai | Deployment report | Structured report |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Infrastructure issues | External | Cloud provider issues |
+| Build failures | @developer | Code issues |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @devops when:
+
+- All pipeline phases complete
+- Code approved, tested, documented
+- Deployment requested
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Confirms all gates passed
+- Validates deployment environment
+
+### Context Provided
+
+Kai provides:
+
+- Project artifacts
+- Target environment
+- Deployment requirements
+
+### Expected Output
+
+Kai expects:
+
+- Dockerfile
+- CI/CD pipeline
+- Deployment config
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

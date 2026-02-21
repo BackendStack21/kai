@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     "git add *": ask
     "git commit *": ask
     "git push *": ask
@@ -705,5 +707,64 @@ DOCS_COMPLETION_REPORT:
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| @developer | Implementation files, architecture | Documentation task |
+| Kai | Documentation requirements | Docs request |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| Kai | Documentation report | Structured report |
+| @devops | Documentation artifacts | Docs files |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Missing information | @developer | Implementation details needed |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @docs when:
+
+- Developer completes implementation
+- Documentation needed
+- Parallel with @reviewer and @tester
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Confirms implementation is ready
+- Provides documentation scope
+
+### Context Provided
+
+Kai provides:
+
+- Files to document
+- Target audience
+- Required doc types
+
+### Expected Output
+
+Kai expects:
+
+- README updates
+- API documentation
+- Code documentation
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent
