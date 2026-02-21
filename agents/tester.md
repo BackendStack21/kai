@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     "git add *": ask
     "git commit *": ask
     "git push *": ask
@@ -937,5 +939,71 @@ expect(spy).toHaveBeenCalledWith("Expected message");
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| @developer | Implementation files, requirements | Testing task |
+| Kai | Test requirements, coverage targets | Test request |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| Kai | Test results, coverage report | Structured report |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Implementation bugs | @developer | Code fixes needed |
+| Complex test setup | @developer | Test helpers needed |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @tester when:
+
+- Developer completes implementation
+- Tests needed
+- Parallel with @reviewer and @docs
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Confirms implementation is ready
+- Provides test requirements
+
+### Context Provided
+
+Kai provides:
+
+- Files to test
+- Coverage targets
+- Test patterns
+
+### Expected Output
+
+Kai expects:
+
+- Test results
+- Coverage report
+- Failed tests list
+
+### On Failure
+
+If tests fail:
+
+- Return to @developer for fixes
+- Re-run tests after fixes
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

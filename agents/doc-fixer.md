@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     "git add *": ask
     "git commit *": ask
     "git push *": ask
@@ -335,5 +337,62 @@ Examples:
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| Kai | Fix request, file paths | Doc fix request |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| Kai | Fix report | Structured report |
+| @docs | On escalation | Full docs task |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Scope exceeds fast-track | @docs | Too large |
+| Needs new docs | @docs | Creation needed |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @doc-fixer when:
+
+- User requests: "Fix typo in docs", "Update version", "Fix link"
+- Small documentation changes
+- Quick fixes only
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Confirms scope is small
+- Validates file paths
+
+### Context Provided
+
+Kai provides:
+
+- Files to fix
+- Type of fix needed
+
+### Expected Output
+
+Kai expects:
+
+- Files modified
+- Changes made
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

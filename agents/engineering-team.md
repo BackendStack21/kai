@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     "git add *": ask
     "git commit *": ask
     "git push *": ask
@@ -510,5 +512,79 @@ Kai invokes this agent when the user requests:
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| Kai | User request, scope, constraints | Full engineering task |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| @architect | Requirements, constraints, context | Structured handoff |
+| @developer | Architecture design, roadmap | Design document |
+| @reviewer | Implementation files, focus areas | File paths + context |
+| @tester | Implementation files, architecture | Code + design |
+| @docs | Implementation files, architecture | Code + design |
+| @devops | All completed artifacts | Deployment context |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Requirements ambiguous | Kai | Needs user clarification |
+| Architectural issues | @architect | Design review needed |
+| Implementation blocked | @developer | Code issues |
+| Security concerns | @security-auditor | Security audit needed |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @engineering-team when:
+
+- User requests: Feature implementation, bug fixes, refactoring
+- Task requires full engineering pipeline
+- Multiple phases needed (design, implementation, review, test)
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Validates request is engineering-related
+- Determines complexity level
+- Plans pipeline phases
+
+### Context Provided
+
+Kai provides:
+
+- User requirements
+- Scope and constraints
+- Acceptance criteria
+
+### Expected Output
+
+Kai expects:
+
+- Complete implementation
+- Review results
+- Test results
+- Documentation
+
+### On Failure
+
+If @engineering-team has issues:
+
+- Retry within budget
+- Escalate to Kai if blocked
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

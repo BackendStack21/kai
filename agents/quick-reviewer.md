@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     "git add *": ask
     "git commit *": ask
     "git push *": ask
@@ -320,5 +322,64 @@ SECURITY_CONCERN_DETECTED:
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| Kai | Files to review | Quick review request |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| Kai | Review report | Structured report |
+| @reviewer | On escalation | Full review |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Changes > 200 LOC | @reviewer | Too large |
+| Security concerns | @reviewer | Deep audit needed |
+| Complex changes | @reviewer | Beyond quick scope |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @quick-reviewer when:
+
+- User requests: "Quick review", "Style check"
+- Small changes (< 200 LOC)
+- Fast feedback needed
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Confirms scope is small
+- Validates file count
+
+### Context Provided
+
+Kai provides:
+
+- Files to review
+- Focus areas
+
+### Expected Output
+
+Kai expects:
+
+- Quick feedback
+- Issues found
+- Approval status
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

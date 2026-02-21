@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     "git add *": ask
     "git commit *": ask
     "git push *": ask
@@ -553,5 +555,74 @@ DEVELOPER_COMPLETION_REPORT:
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| @architect | Architecture design, implementation roadmap | Implementation task |
+| @engineering-team | Requirements, constraints | Feature development |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| @reviewer | Implementation files, focus areas | Code + context |
+| @tester | Implementation files, test requirements | Code + specs |
+| @docs | Implementation files, API context | Code + design |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Architecture conflict | @architect | Design issue |
+| Requirements unclear | @engineering-team | Needs clarification |
+| External dependency issue | @dependency-manager | Package issues |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @developer when:
+
+- Architecture design is complete
+- Implementation can begin
+- Code needs to be written
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Confirms architecture is finalized
+- Provides implementation roadmap
+
+### Context Provided
+
+Kai provides:
+
+- Architecture design document
+- Implementation roadmap
+- Code conventions
+
+### Expected Output
+
+Kai expects:
+
+- Complete implementation
+- Working code
+- Quality checklist completed
+
+### On Failure
+
+If @developer has issues:
+
+- Fix and retry
+- Escalate if blocked
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent

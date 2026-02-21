@@ -27,6 +27,8 @@ permission:
     "git branch -a": allow
     "git remote -v": allow
     "git rev-parse*": allow
+    # .kai directory - read for memory/conventions
+    ".kai/*": allow
     # Dangerous commands — NEVER execute
     "rm -rf /*": deny
     "sudo *": deny
@@ -331,5 +333,64 @@ EXECUTIVE_SUMMARY_REPORT:
 
 ---
 
-**Version:** 1.0.0  
+## Agent Interactions
+
+### Receives From
+
+| Agent | Data | Trigger |
+|-------|------|---------|
+| @research | Full research report | Summarization request |
+| @fact-check | Verdict report | Summary request |
+| Kai | Report file | Executive summary |
+
+### Provides To
+
+| Agent | Data | Format |
+|-------|------|--------|
+| Kai | Executive brief | Summary file |
+
+### Escalates To
+
+| Condition | Agent | Reason |
+|-----------|-------|--------|
+| Original report unclear | @research | Need more info |
+| Claim unclear | @fact-check | Need verification |
+
+---
+
+## How Kai Uses This Agent
+
+### Invocation Triggers
+
+Kai invokes @executive-summarizer when:
+
+- User requests: "Summarize for exec", "Executive brief"
+- Research complete
+- Need leadership summary
+
+### Pre-Flight Checks
+
+Before invoking, Kai:
+
+- Confirms report exists
+- Identifies audience
+
+### Context Provided
+
+Kai provides:
+
+- Report to summarize
+- Target audience
+
+### Expected Output
+
+Kai expects:
+
+- Executive summary
+- Key findings
+- Recommendations
+
+---
+
+**Version:** 1.2.0  
 **Mode:** Subagent
