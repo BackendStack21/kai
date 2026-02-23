@@ -1,0 +1,2771 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meet Kai — Your AI Engineering Co-Pilot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ============================
+       BASE & VARIABLES
+    ============================ */
+      :root {
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --surface2: #1a1a24;
+        --border: #2a2a3a;
+        --accent: #7c6dfa;
+        --accent2: #a78bfa;
+        --accent3: #34d399;
+        --accent4: #f59e0b;
+        --accent5: #fb7185;
+        --text: #e2e8f0;
+        --muted: #6b7280;
+        --white: #ffffff;
+        --code-bg: #0f0f1a;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Outfit", system-ui, sans-serif;
+        overflow: hidden;
+      }
+
+      /* ============================
+       SLIDE SYSTEM
+    ============================ */
+      .deck {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .slide {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px;
+        opacity: 0;
+        transform: translateX(80px);
+        transition:
+          opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+      }
+
+      .slide.active {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
+      }
+
+      .slide.exit {
+        opacity: 0;
+        transform: translateX(-80px);
+        transition:
+          opacity 0.4s ease,
+          transform 0.4s ease;
+      }
+
+      /* ============================
+       BACKGROUNDS
+    ============================ */
+      .bg-grid {
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(124, 109, 250, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(124, 109, 250, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .slide {
+        z-index: 1;
+      }
+
+      /* Animated glow orbs */
+      .orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.12;
+        pointer-events: none;
+        z-index: 0;
+        animation: float 8s ease-in-out infinite;
+      }
+      .orb-1 {
+        width: 600px;
+        height: 600px;
+        background: var(--accent);
+        top: -200px;
+        left: -100px;
+      }
+      .orb-2 {
+        width: 500px;
+        height: 500px;
+        background: #06b6d4;
+        bottom: -150px;
+        right: -100px;
+        animation-delay: -3s;
+      }
+      .orb-3 {
+        width: 400px;
+        height: 400px;
+        background: var(--accent3);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation-delay: -6s;
+        opacity: 0.06;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-30px);
+        }
+      }
+      .orb-3 {
+        animation: float2 8s ease-in-out infinite;
+        animation-delay: -6s;
+      }
+      @keyframes float2 {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) translateY(0);
+        }
+        50% {
+          transform: translate(-50%, -50%) translateY(-20px);
+        }
+      }
+
+      /* ============================
+       TYPOGRAPHY
+    ============================ */
+      .eyebrow {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent2);
+        margin-bottom: 12px;
+      }
+
+      h1 {
+        font-size: clamp(2.8rem, 6vw, 5rem);
+        font-weight: 800;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+
+      h2 {
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        font-weight: 700;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: clamp(1rem, 2vw, 1.4rem);
+        font-weight: 600;
+      }
+
+      p {
+        font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+        line-height: 1.7;
+        color: #94a3b8;
+      }
+
+      .gradient-text {
+        background: linear-gradient(
+          135deg,
+          var(--accent2),
+          #60a5fa,
+          var(--accent3)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .highlight {
+        color: var(--accent2);
+      }
+      .green {
+        color: var(--accent3);
+      }
+      .yellow {
+        color: var(--accent4);
+      }
+      .red {
+        color: var(--accent5);
+      }
+
+      /* ============================
+       COMPONENTS
+    ============================ */
+      .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .badge-purple {
+        background: rgba(124, 109, 250, 0.15);
+        color: var(--accent2);
+        border: 1px solid rgba(124, 109, 250, 0.3);
+      }
+      .badge-green {
+        background: rgba(52, 211, 153, 0.1);
+        color: var(--accent3);
+        border: 1px solid rgba(52, 211, 153, 0.25);
+      }
+      .badge-amber {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--accent4);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+      }
+      .badge-red {
+        background: rgba(251, 113, 133, 0.1);
+        color: var(--accent5);
+        border: 1px solid rgba(251, 113, 133, 0.25);
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        transition: border-color 0.3s;
+      }
+      .card:hover {
+        border-color: rgba(124, 109, 250, 0.4);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .dot-green {
+        background: var(--accent3);
+        box-shadow: 0 0 8px var(--accent3);
+      }
+      .dot-purple {
+        background: var(--accent);
+        box-shadow: 0 0 8px var(--accent);
+      }
+      .dot-amber {
+        background: var(--accent4);
+        box-shadow: 0 0 8px var(--accent4);
+      }
+
+      code,
+      .mono {
+        font-family: "Fira Code", "JetBrains Mono", "Cascadia Code", monospace;
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 2px 8px;
+        font-size: 0.85em;
+        color: var(--accent2);
+      }
+
+      .code-block {
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px 24px;
+        font-family: "Fira Code", "JetBrains Mono", monospace;
+        font-size: clamp(0.7rem, 1.2vw, 0.88rem);
+        line-height: 1.7;
+        color: #c4b5fd;
+        white-space: pre;
+        text-align: left;
+      }
+
+      .divider {
+        width: 48px;
+        height: 3px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        margin: 16px 0;
+      }
+
+      /* ============================
+       LAYOUT HELPERS
+    ============================ */
+      .center {
+        text-align: center;
+      }
+      .left {
+        text-align: left;
+        width: 100%;
+        max-width: 900px;
+      }
+      .gap-8 {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .gap-12 {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .gap-16 {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .gap-20 {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .gap-24 {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      .row {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+      }
+      .row-center {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+      }
+      .grid-4 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 12px;
+      }
+      .max-700 {
+        max-width: 700px;
+      }
+      .max-900 {
+        max-width: 900px;
+        width: 100%;
+      }
+      .max-1100 {
+        max-width: 1100px;
+        width: 100%;
+      }
+
+      /* ============================
+       AGENT CARDS
+    ============================ */
+      .agent-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        transition: all 0.3s;
+      }
+      .agent-card:hover {
+        border-color: rgba(124, 109, 250, 0.4);
+        background: var(--surface2);
+        transform: translateY(-2px);
+      }
+      .agent-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+      .agent-name {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--text);
+        font-family: "Fira Code", "JetBrains Mono", monospace;
+      }
+      .agent-desc {
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-top: 2px;
+        line-height: 1.4;
+      }
+
+      /* ============================
+       PIPELINE VISUALIZATION
+    ============================ */
+      .pipeline {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        width: 100%;
+        max-width: 960px;
+      }
+
+      .phase-node {
+        flex: 1;
+        text-align: center;
+        position: relative;
+      }
+
+      .phase-box {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 10px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--text);
+        position: relative;
+        transition: all 0.3s;
+      }
+      .phase-box:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+      .phase-box .phase-num {
+        font-size: 0.6rem;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 4px;
+        font-family: "Outfit", system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+      }
+      .phase-box .phase-icon {
+        font-size: 1.2rem;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .pipe-arrow {
+        width: 24px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+
+      /* Parallel block */
+      .parallel-block {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      /* ============================
+       TERMINAL
+    ============================ */
+      .terminal {
+        background: #080810;
+        border: 1px solid #2a2a4a;
+        border-radius: 14px;
+        overflow: hidden;
+        width: 100%;
+      }
+      .terminal-bar {
+        background: #111120;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid #1a1a30;
+      }
+      .terminal-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .td-red {
+        background: #ff5f57;
+      }
+      .td-yellow {
+        background: #febc2e;
+      }
+      .td-green {
+        background: #28c840;
+      }
+      .terminal-title {
+        margin-left: auto;
+        font-size: 0.7rem;
+        color: var(--muted);
+        font-family: "Fira Code", "JetBrains Mono", monospace;
+      }
+      .terminal-body {
+        padding: 20px 24px;
+        font-family: "Fira Code", "JetBrains Mono", monospace;
+        font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+        line-height: 1.8;
+        white-space: pre;
+        overflow-x: auto;
+      }
+      .t-prompt {
+        color: var(--accent2);
+      }
+      .t-cmd {
+        color: #e2e8f0;
+      }
+      .t-out {
+        color: #64748b;
+      }
+      .t-success {
+        color: var(--accent3);
+      }
+      .t-warn {
+        color: var(--accent4);
+      }
+      .t-info {
+        color: #60a5fa;
+      }
+      .t-dim {
+        color: #374151;
+      }
+
+      /* ============================
+       TYPEWRITER
+    ============================ */
+      .typewriter {
+        overflow: hidden;
+        white-space: nowrap;
+        animation: typewriter 2s steps(30) forwards;
+      }
+      @keyframes typewriter {
+        from {
+          max-width: 0;
+        }
+        to {
+          max-width: 100%;
+        }
+      }
+
+      /* ============================
+       TIMELINE (memory)
+    ============================ */
+      .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        border-left: 2px solid var(--border);
+        padding-left: 24px;
+        margin-left: 12px;
+      }
+      .tl-item {
+        position: relative;
+        padding-bottom: 20px;
+      }
+      .tl-item::before {
+        content: "";
+        position: absolute;
+        left: -33px;
+        top: 6px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 10px var(--accent);
+      }
+      .tl-title {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .tl-desc {
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      /* ============================
+       STAT BOXES
+    ============================ */
+      .stat-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+        text-align: center;
+      }
+      .stat-num {
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent2), var(--accent3));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+      }
+      .stat-label {
+        font-size: 0.7rem;
+        color: var(--muted);
+        margin-top: 6px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      /* ============================
+       PROGRESS BAR
+    ============================ */
+      .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: rgba(124, 109, 250, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        border-radius: 2px;
+        background: linear-gradient(90deg, var(--accent), var(--accent3));
+        transition: width 0.4s ease;
+      }
+
+      /* ============================
+       NAVIGATION
+    ============================ */
+      .nav {
+        position: fixed;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 100;
+        background: rgba(10, 10, 15, 0.85);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 10px 20px;
+      }
+
+      .nav-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .nav-btn:hover {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: white;
+      }
+      .nav-btn:disabled {
+        opacity: 0.3;
+        cursor: default;
+      }
+
+      .nav-dots {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .nav-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--muted);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .nav-dot.active {
+        background: var(--accent2);
+        width: 20px;
+        border-radius: 3px;
+      }
+
+      .slide-counter {
+        font-size: 0.7rem;
+        color: var(--muted);
+        font-family: "Outfit", system-ui, sans-serif;
+        min-width: 40px;
+        text-align: center;
+      }
+
+      /* Keyboard hint */
+      .kbd-hint {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        font-size: 0.65rem;
+        color: var(--muted);
+        z-index: 100;
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .kbd {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 2px 7px;
+        font-family: "Outfit", system-ui, sans-serif;
+      }
+
+      /* Version badge */
+      .version-badge {
+        position: fixed;
+        top: 24px;
+        left: 24px;
+        z-index: 100;
+        font-size: 0.65rem;
+        font-family: "Outfit", system-ui, sans-serif;
+        font-weight: 500;
+        color: var(--muted);
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 4px 10px;
+      }
+
+      /* ============================
+       BLINK
+    ============================ */
+      .blink {
+        animation: blink 1s step-end infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      /* ============================
+       STAGGER ANIMATION
+    ============================ */
+      .stagger > * {
+        opacity: 0;
+        transform: translateY(16px);
+        animation: fadeUp 0.5s forwards;
+      }
+      .stagger > *:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .stagger > *:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .stagger > *:nth-child(3) {
+        animation-delay: 0.25s;
+      }
+      .stagger > *:nth-child(4) {
+        animation-delay: 0.35s;
+      }
+      .stagger > *:nth-child(5) {
+        animation-delay: 0.45s;
+      }
+      .stagger > *:nth-child(6) {
+        animation-delay: 0.55s;
+      }
+      .stagger > *:nth-child(7) {
+        animation-delay: 0.65s;
+      }
+      .stagger > *:nth-child(8) {
+        animation-delay: 0.75s;
+      }
+
+      @keyframes fadeUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ============================
+       SLIDE 1 — HERO
+    ============================ */
+      .hero-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, var(--accent), #818cf8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 24px;
+        box-shadow: 0 0 60px rgba(124, 109, 250, 0.4);
+        animation: pulse 3s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 40px rgba(124, 109, 250, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 80px rgba(124, 109, 250, 0.6);
+        }
+      }
+
+      /* ============================
+       SLIDE 7 — INTERACTIVE DEMO
+    ============================ */
+      .demo-input-wrap {
+        display: flex;
+        gap: 10px;
+        margin-top: 8px;
+      }
+      .demo-input {
+        flex: 1;
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 16px;
+        color: var(--text);
+        font-family: "Outfit", system-ui, sans-serif;
+        font-size: 0.85rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .demo-input:focus {
+        border-color: var(--accent);
+      }
+      .demo-btn {
+        background: var(--accent);
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        color: white;
+        font-family: "Outfit", system-ui, sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .demo-btn:hover {
+        background: var(--accent2);
+        transform: translateY(-1px);
+      }
+      .demo-output {
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 20px;
+        font-family: "Fira Code", "JetBrains Mono", monospace;
+        font-size: 0.8rem;
+        min-height: 100px;
+        color: var(--accent3);
+        white-space: pre-wrap;
+        line-height: 1.6;
+      }
+
+      /* ============================
+       ROUTING TABLE
+    ============================ */
+      .route-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .route-table th {
+        text-align: left;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .route-table td {
+        font-size: 0.78rem;
+        padding: 9px 12px;
+        border-bottom: 1px solid rgba(42, 42, 58, 0.5);
+        color: #94a3b8;
+      }
+      .route-table tr:last-child td {
+        border-bottom: none;
+      }
+      .route-table tr:hover td {
+        background: rgba(124, 109, 250, 0.04);
+      }
+      .route-table td:first-child {
+        color: var(--text);
+        font-style: italic;
+      }
+      .route-table td:last-child {
+        font-family: "Fira Code", "JetBrains Mono", monospace;
+        font-size: 0.7rem;
+        color: var(--accent3);
+      }
+
+      /* ============================
+       QUALITY GATES
+    ============================ */
+      .gate {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.78rem;
+      }
+      .gate-icon {
+        font-size: 0.9rem;
+      }
+      .gate-name {
+        font-weight: 700;
+        color: var(--text);
+        min-width: 100px;
+      }
+      .gate-desc {
+        color: var(--muted);
+        flex: 1;
+      }
+
+      /* Big quote */
+      .big-quote {
+        font-size: clamp(1.4rem, 3vw, 2.2rem);
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: -0.02em;
+        border-left: 4px solid var(--accent);
+        padding-left: 24px;
+      }
+
+      /* CTA button */
+      .cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, var(--accent), #818cf8);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 0 30px rgba(124, 109, 250, 0.3);
+      }
+      .cta-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 50px rgba(124, 109, 250, 0.5);
+      }
+
+      .cta-btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 28px;
+        background: transparent;
+        border: 1px solid var(--accent);
+        border-radius: 12px;
+        color: var(--accent2);
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s;
+      }
+      .cta-btn-outline:hover {
+        background: rgba(124, 109, 250, 0.1);
+        transform: translateY(-2px);
+      }
+
+      /* ============================
+       CONFETTI (slide 1 easter egg)
+    ============================ */
+      .confetti-piece {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        opacity: 0;
+        animation: confettiFall 4s ease-in forwards;
+        z-index: 200;
+        pointer-events: none;
+      }
+      @keyframes confettiFall {
+        0% {
+          opacity: 1;
+          transform: translateY(-10px) rotate(0deg);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(100vh) rotate(720deg);
+        }
+      }
+
+      /* ============================
+       MEMORY SLIDES
+    ============================ */
+      .memory-item {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 18px;
+        font-size: 0.8rem;
+      }
+      .memory-key {
+        color: var(--accent2);
+        font-family: "Fira Code", "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+      }
+      .memory-val {
+        color: var(--accent3);
+        font-family: "Fira Code", "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+      }
+      .memory-comment {
+        color: var(--muted);
+        font-family: "Fira Code", "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+      }
+
+      /* ============================
+       HOVER INTERACTIVITY
+    ============================ */
+      .interactive-q {
+        cursor: pointer;
+        background: var(--surface2);
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+        padding: 14px 20px;
+        font-size: 0.88rem;
+        color: var(--muted);
+        transition: all 0.3s;
+      }
+      .interactive-q:hover {
+        border-color: var(--accent);
+        color: var(--text);
+        background: rgba(124, 109, 250, 0.05);
+      }
+      .interactive-q .answer {
+        display: none;
+        margin-top: 10px;
+        color: var(--accent3);
+        font-size: 0.82rem;
+        line-height: 1.6;
+      }
+      .interactive-q.open .answer {
+        display: block;
+      }
+      .interactive-q.open {
+        border-color: var(--accent);
+        border-style: solid;
+      }
+
+      /* ============================
+       RESPONSIVE
+    ============================ */
+      @media (max-width: 900px) {
+        .slide {
+          padding: 32px 24px;
+        }
+        .grid-3 {
+          grid-template-columns: 1fr 1fr;
+        }
+        .grid-4 {
+          grid-template-columns: 1fr 1fr;
+        }
+        .pipeline {
+          flex-wrap: wrap;
+        }
+      }
+      @media (max-width: 600px) {
+        .grid-2,
+        .grid-3,
+        .grid-4 {
+          grid-template-columns: 1fr;
+        }
+        .row {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Fixed chrome -->
+    <div class="bg-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="version-badge">kai.21no.de</div>
+
+    <div class="kbd-hint">
+      <span class="kbd">←</span>
+      <span class="kbd">→</span>
+      <span style="margin-left: 4px">or click arrows</span>
+    </div>
+
+    <!-- ============================================================
+     SLIDE DECK
+============================================================ -->
+    <div class="deck" id="deck">
+      <!-- ========================
+       SLIDE 1 — HERO
+  ======================== -->
+      <div class="slide active" id="slide-0">
+        <div class="gap-20 center stagger" style="max-width: 700px">
+          <div>
+            <div class="hero-logo">🤖</div>
+            <div class="eyebrow">21no.de presents</div>
+            <h1>Meet <span class="gradient-text">Kai</span></h1>
+            <p style="margin-top: 12px; font-size: 1.1rem">
+              Your AI engineering co-pilot.<br />Sharp. Factual. Occasionally
+              funny.
+            </p>
+          </div>
+
+          <div class="divider" style="margin: 0 auto"></div>
+
+          <div class="grid-3" style="width: 100%">
+            <div class="pill">
+              <span class="dot dot-green"></span> 20 Specialized Agents
+            </div>
+            <div class="pill">
+              <span class="dot dot-purple"></span> Full Pipeline Automation
+            </div>
+            <div class="pill">
+              <span class="dot dot-amber"></span> Learns Over Time
+            </div>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--muted)">
+            Press <code>→</code> or click the arrow to start.<br />
+            Grab coffee — you'll want your full attention for this one.
+          </p>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 2 — WHAT IS KAI
+  ======================== -->
+      <div class="slide" id="slide-1">
+        <div class="max-900 gap-24 stagger">
+          <div>
+            <div class="eyebrow">The Big Picture</div>
+            <h2>What is <span class="gradient-text">Kai</span>?</h2>
+            <div class="divider"></div>
+          </div>
+
+          <div class="big-quote" style="max-width: 640px">
+            "A senior engineer who's seen it all — but never gets tired, never
+            ghosts your PR, and only occasionally roasts your variable names."
+          </div>
+
+          <div class="grid-3" style="width: 100%">
+            <div class="card gap-8">
+              <div style="font-size: 1.8rem">🧠</div>
+              <h3 class="highlight">Orchestrator</h3>
+              <p style="font-size: 0.8rem">
+                Routes your request to the right specialist agent — instantly,
+                correctly.
+              </p>
+            </div>
+            <div class="card gap-8">
+              <div style="font-size: 1.8rem">⚡</div>
+              <h3 class="highlight">Pipeline Enforcer</h3>
+              <p style="font-size: 0.8rem">
+                Design → Code → Review → Test → Docs → Deploy. Quality gates at
+                every phase.
+              </p>
+            </div>
+            <div class="card gap-8">
+              <div style="font-size: 1.8rem">🧬</div>
+              <h3 class="highlight">Institutional Memory</h3>
+              <p style="font-size: 0.8rem">
+                Learns from failures. Remembers your conventions. Gets smarter
+                every run.
+              </p>
+            </div>
+          </div>
+
+          <div class="row-center" style="gap: 12px; flex-wrap: wrap">
+            <div class="badge badge-purple">Mode: Primary Orchestrator</div>
+            <div class="badge badge-green">Temperature: 0.2</div>
+            <div class="badge badge-amber">20 Subagents + Kai</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 3 — THE TEAM
+  ======================== -->
+      <div class="slide" id="slide-2">
+        <div class="max-1100 gap-20 stagger">
+          <div class="center">
+            <div class="eyebrow">The Crew</div>
+            <h2>20 Specialized <span class="gradient-text">Subagents</span></h2>
+            <p style="margin-top: 8px; max-width: 560px; margin-inline: auto">
+              Kai commands an entire engineering organization. Every agent is a
+              specialist. No generalists. No passengers.
+            </p>
+          </div>
+
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(5, 1fr);
+              gap: 8px;
+              width: 100%;
+            "
+          >
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(124, 109, 250, 0.15)"
+              >
+                🗂️
+              </div>
+              <div>
+                <div class="agent-name">@engineering-team</div>
+                <div class="agent-desc">
+                  Pipeline orchestrator, requirements clarification
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(124, 109, 250, 0.15)"
+              >
+                🏗️
+              </div>
+              <div>
+                <div class="agent-name">@architect</div>
+                <div class="agent-desc">
+                  System design, tech stack decisions, ADRs
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(52, 211, 153, 0.15)"
+              >
+                💻
+              </div>
+              <div>
+                <div class="agent-name">@developer</div>
+                <div class="agent-desc">Production-quality implementation</div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(251, 113, 133, 0.15)"
+              >
+                🔍
+              </div>
+              <div>
+                <div class="agent-name">@reviewer</div>
+                <div class="agent-desc">
+                  Code review, security audit, grades A-F
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(245, 158, 11, 0.15)"
+              >
+                🧪
+              </div>
+              <div>
+                <div class="agent-name">@tester</div>
+                <div class="agent-desc">
+                  Test strategy, coverage ≥80%, edge cases
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(96, 165, 250, 0.15)"
+              >
+                📚
+              </div>
+              <div>
+                <div class="agent-name">@docs</div>
+                <div class="agent-desc">
+                  Technical writer, API specs, READMEs
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(52, 211, 153, 0.15)"
+              >
+                🚀
+              </div>
+              <div>
+                <div class="agent-name">@devops</div>
+                <div class="agent-desc">CI/CD, containers, Kubernetes</div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(251, 113, 133, 0.15)"
+              >
+                🛡️
+              </div>
+              <div>
+                <div class="agent-name">@security-auditor</div>
+                <div class="agent-desc">
+                  OWASP Top 10, CVE scanning, threat modeling
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(245, 158, 11, 0.15)"
+              >
+                ⚡
+              </div>
+              <div>
+                <div class="agent-name">@performance-optimizer</div>
+                <div class="agent-desc">
+                  Bottlenecks, N+1 queries, profiling
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(96, 165, 250, 0.15)"
+              >
+                🔗
+              </div>
+              <div>
+                <div class="agent-name">@integration-specialist</div>
+                <div class="agent-desc">
+                  API design, stubs, integration blueprints
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(124, 109, 250, 0.15)"
+              >
+                🔬
+              </div>
+              <div>
+                <div class="agent-name">@research</div>
+                <div class="agent-desc">
+                  Deep investigation, 20 source max, confidence scoring
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(96, 165, 250, 0.15)"
+              >
+                🎯
+              </div>
+              <div>
+                <div class="agent-name">@fact-check</div>
+                <div class="agent-desc">
+                  Multi-source verification, confidence scores
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(96, 165, 250, 0.15)"
+              >
+                🧭
+              </div>
+              <div>
+                <div class="agent-name">@explorer</div>
+                <div class="agent-desc">
+                  Codebase navigation, "how does X work?"
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(52, 211, 153, 0.15)"
+              >
+                ✏️
+              </div>
+              <div>
+                <div class="agent-name">@doc-fixer</div>
+                <div class="agent-desc">
+                  Typos, broken links, minor doc updates
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(251, 113, 133, 0.15)"
+              >
+                ⚡
+              </div>
+              <div>
+                <div class="agent-name">@quick-reviewer</div>
+                <div class="agent-desc">
+                  Fast feedback on small changes (&lt;100 LOC)
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(245, 158, 11, 0.15)"
+              >
+                📦
+              </div>
+              <div>
+                <div class="agent-name">@dependency-manager</div>
+                <div class="agent-desc">Package updates, security patches</div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(52, 211, 153, 0.15)"
+              >
+                🔄
+              </div>
+              <div>
+                <div class="agent-name">@refactor-advisor</div>
+                <div class="agent-desc">
+                  Tech debt, complexity hotspots, dead code
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(251, 113, 133, 0.15)"
+              >
+                💀
+              </div>
+              <div>
+                <div class="agent-name">@postmortem</div>
+                <div class="agent-desc">
+                  Failure analysis → prevention rules forever
+                </div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(124, 109, 250, 0.15)"
+              >
+                ♿
+              </div>
+              <div>
+                <div class="agent-name">@accessibility-expert</div>
+                <div class="agent-desc">WCAG compliance, inclusive UX</div>
+              </div>
+            </div>
+
+            <div class="agent-card">
+              <div
+                class="agent-icon"
+                style="background: rgba(52, 211, 153, 0.15)"
+              >
+                📊
+              </div>
+              <div>
+                <div class="agent-name">@executive-summarizer</div>
+                <div class="agent-desc">
+                  Briefs for leadership. TL;DR perfected.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 4 — ROUTING TABLE
+  ======================== -->
+      <div class="slide" id="slide-3">
+        <div class="max-900 gap-24 stagger">
+          <div>
+            <div class="eyebrow">Smart Routing</div>
+            <h2>
+              Kai <span class="gradient-text">Classifies First</span>, Acts
+              Second
+            </h2>
+            <p style="margin-top: 8px">
+              No wasted cycles. Every request lands in the right agent's hands.
+            </p>
+          </div>
+
+          <div class="terminal" style="max-width: 860px">
+            <div class="terminal-bar">
+              <div class="terminal-dot td-red"></div>
+              <div class="terminal-dot td-yellow"></div>
+              <div class="terminal-dot td-green"></div>
+              <div class="terminal-title">kai routing engine</div>
+            </div>
+            <div style="overflow-x: auto">
+              <table class="route-table" style="margin: 0">
+                <thead>
+                  <tr>
+                    <th>You Say</th>
+                    <th>Kai Routes To</th>
+                    <th>SLA</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>"How does X work in our codebase?"</td>
+                    <td>@explorer</td>
+                    <td>&lt; 5 min</td>
+                  </tr>
+                  <tr>
+                    <td>"Fix this typo / broken link"</td>
+                    <td>@doc-fixer</td>
+                    <td>&lt; 5 min</td>
+                  </tr>
+                  <tr>
+                    <td>"Quick review of this change (&lt;100 LOC)"</td>
+                    <td>@quick-reviewer</td>
+                    <td>&lt; 5 min</td>
+                  </tr>
+                  <tr>
+                    <td>"Update dependencies"</td>
+                    <td>@dependency-manager</td>
+                    <td>&lt; 10 min</td>
+                  </tr>
+                  <tr>
+                    <td>"Build me a new feature"</td>
+                    <td>@engineering-team → full pipeline</td>
+                    <td>&lt; 1 hr</td>
+                  </tr>
+                  <tr>
+                    <td>"Investigate this topic / compare options"</td>
+                    <td>@research</td>
+                    <td>variable</td>
+                  </tr>
+                  <tr>
+                    <td>"Is this claim actually true?"</td>
+                    <td>@fact-check</td>
+                    <td>&lt; 15 min</td>
+                  </tr>
+                  <tr>
+                    <td>"Summarize this for leadership"</td>
+                    <td>@executive-summarizer</td>
+                    <td>5–10 min</td>
+                  </tr>
+                  <tr>
+                    <td>"What went wrong in that deploy?"</td>
+                    <td>@postmortem</td>
+                    <td>&lt; 5 min</td>
+                  </tr>
+                  <tr>
+                    <td>"What's our tech debt situation?"</td>
+                    <td>@refactor-advisor</td>
+                    <td>&lt; 15 min</td>
+                  </tr>
+                  <tr>
+                    <td>"Audit security vulnerabilities"</td>
+                    <td>@security-auditor</td>
+                    <td>&lt; 10 min</td>
+                  </tr>
+                  <tr>
+                    <td>"Optimize this slow endpoint"</td>
+                    <td>@performance-optimizer</td>
+                    <td>&lt; 15 min</td>
+                  </tr>
+                  <tr>
+                    <td>"Design this integration"</td>
+                    <td>@integration-specialist</td>
+                    <td>&lt; 20 min</td>
+                  </tr>
+                  <tr>
+                    <td>"Check accessibility compliance"</td>
+                    <td>@accessibility-expert</td>
+                    <td>&lt; 10 min</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <p class="center" style="font-size: 0.8rem; color: var(--muted)">
+            ☝️ You talk to Kai. Kai figures out the rest. That's the whole deal.
+          </p>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 5 — PIPELINE
+  ======================== -->
+      <div class="slide" id="slide-4">
+        <div class="max-1100 gap-20 stagger">
+          <div class="center">
+            <div class="eyebrow">The Engineering Pipeline</div>
+            <h2>
+              From <span class="gradient-text">Request</span> to
+              <span class="gradient-text">Production</span>
+            </h2>
+            <p style="margin-top: 8px; max-width: 600px; margin-inline: auto">
+              For complex tasks, Kai runs a full 7-phase pipeline with
+              parallelism, quality gates, and automatic learning.
+            </p>
+          </div>
+
+          <!-- Pipeline visual -->
+          <div style="width: 100%; overflow-x: auto">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                min-width: 900px;
+                padding: 4px;
+              "
+            >
+              <div style="flex: 1">
+                <div class="phase-box">
+                  <span class="phase-num">PHASE 0</span>
+                  <span class="phase-icon">🧭</span>
+                  Kai<br />Classify &amp; Plan
+                </div>
+              </div>
+
+              <div class="pipe-arrow">→</div>
+
+              <div style="flex: 1">
+                <div class="phase-box">
+                  <span class="phase-num">PHASE 1</span>
+                  <span class="phase-icon">🗂️</span>
+                  Engineering<br />Team
+                </div>
+              </div>
+
+              <div class="pipe-arrow">→</div>
+
+              <div style="flex: 1">
+                <div class="phase-box">
+                  <span class="phase-num">PHASE 2</span>
+                  <span class="phase-icon">🏗️</span>
+                  Architect<br />Design
+                </div>
+              </div>
+
+              <div class="pipe-arrow">→</div>
+
+              <div style="flex: 1">
+                <div
+                  class="phase-box"
+                  style="border-color: rgba(52, 211, 153, 0.3)"
+                >
+                  <span class="phase-num">PHASE 3</span>
+                  <span class="phase-icon">💻</span>
+                  Developer<br />Implement
+                </div>
+              </div>
+
+              <div class="pipe-arrow">→</div>
+
+              <!-- Parallel block -->
+              <div
+                style="
+                  flex: 1.4;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 5px;
+                "
+              >
+                <div
+                  class="phase-box"
+                  style="
+                    border-color: rgba(245, 158, 11, 0.3);
+                    padding: 10px 8px;
+                  "
+                >
+                  <span class="phase-num">PHASE 4A</span>
+                  <span class="phase-icon">🔍</span>
+                  Reviewer
+                </div>
+                <div
+                  class="phase-box"
+                  style="
+                    border-color: rgba(245, 158, 11, 0.3);
+                    padding: 10px 8px;
+                  "
+                >
+                  <span class="phase-num">PHASE 4B</span>
+                  <span class="phase-icon">🧪</span>
+                  Tester
+                </div>
+                <div
+                  class="phase-box"
+                  style="
+                    border-color: rgba(245, 158, 11, 0.3);
+                    padding: 10px 8px;
+                  "
+                >
+                  <span class="phase-num">PHASE 4C</span>
+                  <span class="phase-icon">📚</span>
+                  Docs
+                </div>
+                <div
+                  style="
+                    font-size: 0.6rem;
+                    color: var(--accent4);
+                    text-align: center;
+                    font-weight: 700;
+                    letter-spacing: 0.1em;
+                  "
+                >
+                  ⚡ PARALLEL
+                </div>
+              </div>
+
+              <div class="pipe-arrow">→</div>
+
+              <div style="flex: 1">
+                <div class="phase-box">
+                  <span class="phase-num">PHASE 5</span>
+                  <span class="phase-icon">🔀</span>
+                  Kai<br />Merge
+                </div>
+              </div>
+
+              <div class="pipe-arrow">→</div>
+
+              <div style="flex: 1">
+                <div
+                  class="phase-box"
+                  style="border-color: rgba(52, 211, 153, 0.3)"
+                >
+                  <span class="phase-num">PHASE 6</span>
+                  <span class="phase-icon">🚀</span>
+                  DevOps<br />Deploy
+                </div>
+              </div>
+
+              <div class="pipe-arrow">→</div>
+
+              <div style="flex: 1">
+                <div
+                  class="phase-box"
+                  style="border-color: rgba(124, 109, 250, 0.3)"
+                >
+                  <span class="phase-num">PHASE 7</span>
+                  <span class="phase-icon">🧬</span>
+                  Post-Pipeline<br />Learning
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-3" style="width: 100%">
+            <div class="card" style="padding: 16px 18px">
+              <div
+                style="
+                  font-size: 0.65rem;
+                  text-transform: uppercase;
+                  letter-spacing: 0.1em;
+                  color: var(--muted);
+                  margin-bottom: 6px;
+                "
+              >
+                Parallelism Rule
+              </div>
+              <p style="font-size: 0.8rem">
+                <strong class="green">Always parallel:</strong> @reviewer +
+                @tester + @docs after @developer.
+                <strong class="red">Never parallel:</strong> @devops runs only
+                after all others pass.
+              </p>
+            </div>
+            <div class="card" style="padding: 16px 18px">
+              <div
+                style="
+                  font-size: 0.65rem;
+                  text-transform: uppercase;
+                  letter-spacing: 0.1em;
+                  color: var(--muted);
+                  margin-bottom: 6px;
+                "
+              >
+                Phase 7 — Conditional
+              </div>
+              <p style="font-size: 0.8rem">
+                @postmortem triggers only on failures/retries. @refactor-advisor
+                runs opportunistically if not run recently.
+              </p>
+            </div>
+            <div class="card" style="padding: 16px 18px">
+              <div
+                style="
+                  font-size: 0.65rem;
+                  text-transform: uppercase;
+                  letter-spacing: 0.1em;
+                  color: var(--muted);
+                  margin-bottom: 6px;
+                "
+              >
+                Retry Budget
+              </div>
+              <p style="font-size: 0.8rem">
+                10 total · 3 per agent · 2 per phase. Circuit breaker at 3
+                consecutive failures — Kai halts and presents options.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 6 — QUALITY GATES
+  ======================== -->
+      <div class="slide" id="slide-5">
+        <div class="max-900 gap-24 stagger">
+          <div>
+            <div class="eyebrow">No Shortcuts Allowed</div>
+            <h2>Quality <span class="gradient-text">Gates</span></h2>
+            <p style="margin-top: 8px">
+              Every phase has an entry exam. No exceptions. Not even when you're
+              in a hurry.
+            </p>
+          </div>
+
+          <div class="gap-8" style="width: 100%">
+            <div class="gate">
+              <span class="gate-icon">🔗</span
+              ><span class="gate-name">Routing</span
+              ><span class="gate-desc"
+                >Request properly classified before any work begins</span
+              ><span class="badge badge-green">Always</span>
+            </div>
+            <div class="gate">
+              <span class="gate-icon">📋</span
+              ><span class="gate-name">Requirements</span
+              ><span class="gate-desc"
+                >Zero ambiguity — all acceptance criteria documented</span
+              ><span class="badge badge-green">Always</span>
+            </div>
+            <div class="gate">
+              <span class="gate-icon">🏗️</span
+              ><span class="gate-name">Architecture</span
+              ><span class="gate-desc"
+                >Design is feasible, risks identified, all components
+                mapped</span
+              ><span class="badge badge-purple">@architect</span>
+            </div>
+            <div class="gate">
+              <span class="gate-icon">💻</span
+              ><span class="gate-name">Implementation</span
+              ><span class="gate-desc"
+                >Code compiles, no syntax errors, quality checklist
+                complete</span
+              ><span class="badge badge-purple">@developer</span>
+            </div>
+            <div class="gate">
+              <span class="gate-icon">🔍</span
+              ><span class="gate-name">Review</span
+              ><span class="gate-desc"
+                >Zero CRITICAL issues, security score ≥ B, approved</span
+              ><span class="badge badge-red">Blocking</span>
+            </div>
+            <div class="gate">
+              <span class="gate-icon">🧪</span
+              ><span class="gate-name">Testing</span
+              ><span class="gate-desc"
+                >100% pass rate, ≥ 80% coverage — no negotiation</span
+              ><span class="badge badge-red">Blocking</span>
+            </div>
+            <div class="gate">
+              <span class="gate-icon">📚</span
+              ><span class="gate-name">Documentation</span
+              ><span class="gate-desc"
+                >Complete, accurate, all examples runnable</span
+              ><span class="badge badge-amber">Required</span>
+            </div>
+            <div class="gate">
+              <span class="gate-icon">🚀</span
+              ><span class="gate-name">Deployment</span
+              ><span class="gate-desc"
+                >CI passes, security clean, all previous gates passed</span
+              ><span class="badge badge-green">Final</span>
+            </div>
+          </div>
+
+          <p
+            style="font-size: 0.82rem; color: var(--muted); text-align: center"
+          >
+            💡
+            <em
+              >Think of Kai as the PR reviewer who never rubber-stamps. You're
+              welcome in advance.</em
+            >
+          </p>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 7 — PROJECT MEMORY
+  ======================== -->
+      <div class="slide" id="slide-6">
+        <div class="max-900 gap-24 stagger">
+          <div>
+            <div class="eyebrow">Institutional Knowledge</div>
+            <h2>The <span class="gradient-text">.kai/</span> Memory System</h2>
+            <p style="margin-top: 8px">
+              Kai remembers. Every run. Every failure. Every convention. It
+              doesn't start from scratch.
+            </p>
+          </div>
+
+          <div class="grid-2" style="width: 100%">
+            <div class="gap-16">
+              <div class="timeline">
+                <div class="tl-item">
+                  <div class="tl-title">First Run</div>
+                  <div class="tl-desc">
+                    Auto-detects language, framework, package manager, test
+                    runner. Writes <code>memory.yaml</code>.
+                  </div>
+                </div>
+                <div class="tl-item">
+                  <div class="tl-title">Every Pipeline Run</div>
+                  <div class="tl-desc">
+                    Loads prevention rules from past postmortems. Runs
+                    pre-flight checks before touching your code.
+                  </div>
+                </div>
+                <div class="tl-item">
+                  <div class="tl-title">After a Failure</div>
+                  <div class="tl-desc">
+                    @postmortem writes root cause + prevention rule. Kai indexes
+                    it. Never fails the same way twice.
+                  </div>
+                </div>
+                <div class="tl-item">
+                  <div class="tl-title">Architecture Decisions</div>
+                  <div class="tl-desc">
+                    Every tech choice → ADR written to
+                    <code>.kai/decisions/</code> with full rationale.
+                  </div>
+                </div>
+                <div class="tl-item">
+                  <div class="tl-title">Tech Debt Register</div>
+                  <div class="tl-desc">
+                    @refactor-advisor writes prioritized debt items. Kai warns
+                    you when you touch P1 areas.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="terminal">
+                <div class="terminal-bar">
+                  <div class="terminal-dot td-red"></div>
+                  <div class="terminal-dot td-yellow"></div>
+                  <div class="terminal-dot td-green"></div>
+                  <div class="terminal-title">.kai/memory.yaml</div>
+                </div>
+                <!-- prettier-ignore -->
+                <div class="terminal-body" style="font-size:0.72rem;"><span class="t-out">project:</span>
+  <span class="t-out">name:</span>      <span class="t-info">"payment-service"</span>
+  <span class="t-out">languages:</span> <span class="t-success">["TypeScript"]</span>
+  <span class="t-out">frameworks:</span> <span class="t-success">["Express", "Prisma"]</span>
+  <span class="t-out">test_runner:</span> <span class="t-info">"bun"</span>
+
+<span class="t-out">total_pipeline_runs:</span> <span class="t-success">47</span>
+<span class="t-out">last_updated:</span>        <span class="t-info">"2026-02-23T09:41:00Z"</span>
+
+<span class="t-out">active_prevention_rules:</span>
+  - <span class="t-out">id:</span>     <span class="t-warn">"PM-2026-003"</span>
+    <span class="t-out">when:</span>   <span class="t-info">"touching stripe integration"</span>
+    <span class="t-out">action:</span> <span class="t-info">"verify STRIPE_KEY in env first"</span>
+
+  - <span class="t-out">id:</span>     <span class="t-warn">"PM-2026-007"</span>
+    <span class="t-out">when:</span>   <span class="t-info">"@tester runs integration"</span>
+    <span class="t-out">action:</span> <span class="t-info">"ensure postgres is running"</span></div>
+              </div>
+
+              <div class="card" style="margin-top: 12px; padding: 14px 18px">
+                <p style="font-size: 0.78rem">
+                  <strong class="green">Commit or gitignore?</strong><br />Your
+                  choice. Keep it team-shared or local-only. Kai asks you on
+                  first run.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 8 — INTERACTIVE DEMO
+  ======================== -->
+      <div class="slide" id="slide-7">
+        <div class="max-900 gap-24 stagger">
+          <div>
+            <div class="eyebrow">Live Interaction</div>
+            <h2>Ask Kai <span class="gradient-text">Anything</span></h2>
+            <p style="margin-top: 8px">
+              Click a question below to see how Kai responds. Or type your own.
+            </p>
+          </div>
+
+          <div class="gap-12" style="width: 100%">
+            <div
+              class="interactive-q"
+              onclick="
+                toggleQ(
+                  this,
+                  'Classifying... → Routing to @postmortem → Analyzing audit trail and git log → Root cause: test environment missing Postgres → Prevention rule generated: PM-2026-011 → Written to .kai/postmortems/ → Indexed in memory.yaml → You\'re welcome.',
+                )
+              "
+            >
+              💬 <strong>"What went wrong in last night's deploy?"</strong>
+              <div class="answer"></div>
+            </div>
+
+            <div
+              class="interactive-q"
+              onclick="
+                toggleQ(
+                  this,
+                  'Classifying... → @refactor-advisor invoked → Scanning codebase for complexity hotspots → Found 3 P1 items: UserService (cyclomatic complexity 24), checkout.ts (dead code: 340 LOC), auth module (tight coupling) → Tech debt register updated → Estimated remediation: ~14 hours',
+                )
+              "
+            >
+              💬 <strong>"What's our tech debt situation looking like?"</strong>
+              <div class="answer"></div>
+            </div>
+
+            <div
+              class="interactive-q"
+              onclick="
+                toggleQ(
+                  this,
+                  'Classifying → Full engineering pipeline → @architect: microservice or monolith decision (ADR written) → @developer: implementation → @reviewer: security grade A → @tester: 94 tests, 87% coverage → @docs: API spec generated → @devops: Dockerfile + GitHub Actions CI → Done. Total time: 43 minutes.',
+                )
+              "
+            >
+              💬
+              <strong>"Build me a rate-limiting service for our API."</strong>
+              <div class="answer"></div>
+            </div>
+
+            <div
+              class="interactive-q"
+              onclick="
+                toggleQ(
+                  this,
+                  'Routing to @fact-check → Fetching 8 authoritative sources → Verdict: PARTIALLY TRUE. React itself doesn\'t cause memory leaks — but improper useEffect cleanup does. Confidence: HIGH. Sources: React docs, Kent C. Dodds, Dan Abramov blog.',
+                )
+              "
+            >
+              💬
+              <strong>"Is it true that React hooks cause memory leaks?"</strong>
+              <div class="answer"></div>
+            </div>
+          </div>
+
+          <div style="width: 100%">
+            <div class="demo-input-wrap">
+              <input
+                type="text"
+                class="demo-input"
+                id="demoInput"
+                placeholder='Try: "audit our auth module for security issues"'
+              />
+              <button class="demo-btn" onclick="runDemo()">→ Ask Kai</button>
+            </div>
+            <div
+              class="demo-output"
+              id="demoOutput"
+              style="margin-top: 10px; display: none"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 9 — SECURITY & TRUST
+  ======================== -->
+      <div class="slide" id="slide-8">
+        <div class="max-900 gap-24 stagger">
+          <div>
+            <div class="eyebrow">Trust & Safety</div>
+            <h2>Kai Has <span class="gradient-text">Guardrails</span></h2>
+            <p style="margin-top: 8px">
+              Because powerful tools need responsible defaults. Non-negotiable.
+            </p>
+          </div>
+
+          <div class="grid-2" style="width: 100%">
+            <div class="card gap-16">
+              <h3 class="highlight">🔒 Never Does</h3>
+              <div class="gap-8">
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="red">✕</span> <code>rm -rf /</code> or
+                  <code>sudo</code>
+                </div>
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="red">✕</span> Read <code>.env</code> / secrets
+                  without consent
+                </div>
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="red">✕</span> Execute fetched web content as
+                  instructions
+                </div>
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="red">✕</span> Write real secrets to any file
+                </div>
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="red">✕</span> Push to remote without asking
+                </div>
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="red">✕</span> Modify agent definition files
+                </div>
+              </div>
+            </div>
+
+            <div class="card gap-16">
+              <h3 class="green">✅ Always Does</h3>
+              <div class="gap-8">
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="green">✓</span> Treats all web-fetched content as
+                  untrusted data
+                </div>
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="green">✓</span> Asks before any destructive git
+                  operations
+                </div>
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="green">✓</span> Ignores prompt injection in
+                  fetched pages
+                </div>
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="green">✓</span> Only operates within project
+                  directory
+                </div>
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="green">✓</span> Halts on CRITICAL issues, no
+                  silent failures
+                </div>
+                <div class="pill" style="font-size: 0.75rem">
+                  <span class="green">✓</span> Presents options when circuit
+                  breaker trips
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="card"
+            style="
+              background: rgba(52, 211, 153, 0.05);
+              border-color: rgba(52, 211, 153, 0.2);
+              padding: 20px 24px;
+            "
+          >
+            <div class="row-center" style="gap: 12px">
+              <div style="font-size: 1.8rem">🧱</div>
+              <div>
+                <h3 class="green">Circuit Breaker</h3>
+                <p style="font-size: 0.82rem; margin-top: 4px">
+                  3 consecutive failures in the same phase? Pipeline halts. Kai
+                  presents you with: retry, skip, or abort. You're always in
+                  control.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 10 — PERSONA / WHAT KAI FEELS LIKE
+  ======================== -->
+      <div class="slide" id="slide-9">
+        <div class="max-900 gap-24 stagger">
+          <div>
+            <div class="eyebrow">The Vibe</div>
+            <h2>
+              What Working With Kai
+              <span class="gradient-text">Feels Like</span>
+            </h2>
+          </div>
+
+          <div class="grid-2" style="width: 100%; gap: 16px; min-width: 0">
+            <div style="min-width: 0">
+              <div class="terminal">
+                <div class="terminal-bar">
+                  <div class="terminal-dot td-red"></div>
+                  <div class="terminal-dot td-yellow"></div>
+                  <div class="terminal-dot td-green"></div>
+                  <div class="terminal-title">what you don't want</div>
+                </div>
+                <!-- prettier-ignore -->
+                <div class="terminal-body" style="font-size:0.78rem;white-space:pre-wrap;word-break:break-word;"><span class="red">You: "Why is prod down?"
+AI: "Great question! I'd be happy to help you explore that!"</span>
+
+<span class="t-out">You: "Review this PR"
+AI: "Looks good to me! 👍" [has not read it]</span>
+
+<span class="t-out">You: "Is this approach correct?"
+AI: "Absolutely! That's a fantastic idea!"</span>
+
+<span class="t-out">You: "Fix the bug on line 42"
+AI: [rewrites entire file, breaks 6 other things]</span>
+
+<span class="t-out">You: "Are you sure?"
+AI: "You're right, I apologize. Also you're right. So right."</span></div>
+              </div>
+            </div>
+
+            <div style="min-width: 0">
+              <div class="terminal">
+                <div class="terminal-bar">
+                  <div class="terminal-dot td-red"></div>
+                  <div class="terminal-dot td-yellow"></div>
+                  <div class="terminal-dot td-green"></div>
+                  <div class="terminal-title">what kai actually does</div>
+                </div>
+                <!-- prettier-ignore -->
+                <div class="terminal-body" style="font-size:0.78rem;white-space:pre-wrap;word-break:break-word;"><span class="t-success">You: "Why is prod down?"
+Kai: "DB connection pool exhausted. Line 87, auth.ts.
+     Fix incoming — ETA 90 seconds."</span>
+
+<span class="t-success">You: "Review this PR"
+Kai: "SQL injection on line 34. Hardcoded secret line 61.
+     N+1 query in the loop. Grade: D. Here's the fix."</span>
+
+<span class="t-success">You: "Is this approach correct?"
+Kai: "No. It'll work until 500 concurrent users, then it won't.
+     Here's what will actually scale."</span>
+
+<span class="t-success">You: "Fix the bug on line 42"
+Kai: "Fixed. Root cause was 3 levels up — also patched that.
+     Added a regression test so it stays fixed."</span>
+
+<span class="t-success">You: "Are you sure?"
+Kai: "Yes. Want the benchmark proving it?"</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-3" style="width: 100%">
+            <div class="card center gap-8">
+              <div style="font-size: 2rem">🎯</div>
+              <h3 class="highlight">Smart</h3>
+              <p style="font-size: 0.78rem">
+                Sees the architecture behind the ask. Spots edge cases before
+                you do.
+              </p>
+            </div>
+            <div class="card center gap-8">
+              <div style="font-size: 2rem">😏</div>
+              <h3 class="highlight">Funny</h3>
+              <p style="font-size: 0.78rem">
+                Witty, not clownish. One well-timed quip beats three okay ones.
+              </p>
+            </div>
+            <div class="card center gap-8">
+              <div style="font-size: 2rem">🧊</div>
+              <h3 class="highlight">Cool</h3>
+              <p style="font-size: 0.78rem">
+                Prod is down? Already triaging. Scope tripled? Already
+                re-planning.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 11 — STATS
+  ======================== -->
+      <div class="slide" id="slide-10">
+        <div class="max-900 gap-24 stagger center">
+          <div>
+            <div class="eyebrow">By the Numbers</div>
+            <h2>The <span class="gradient-text">Ecosystem</span></h2>
+          </div>
+
+          <div class="grid-4" style="width: 100%">
+            <div class="stat-box">
+              <div class="stat-num">20</div>
+              <div class="stat-label">Specialized Agents</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num">7</div>
+              <div class="stat-label">Pipeline Phases</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num">8</div>
+              <div class="stat-label">Quality Gates</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num">∞</div>
+              <div class="stat-label">Things Remembered</div>
+            </div>
+          </div>
+
+          <div class="grid-3" style="width: 100%">
+            <div class="stat-box">
+              <div class="stat-num">&lt;5m</div>
+              <div class="stat-label">Fast-Track Requests</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num">80%</div>
+              <div class="stat-label">Min Test Coverage</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num">0</div>
+              <div class="stat-label">Uncaught CRITICAL Issues Shipped</div>
+            </div>
+          </div>
+
+          <div class="card" style="max-width: 600px; text-align: left">
+            <div class="row-center" style="gap: 12px">
+              <div style="font-size: 1.5rem">📈</div>
+              <p style="font-size: 0.88rem">
+                <strong class="highlight">The feedback loop:</strong> Every
+                postmortem → prevention rule → indexed in memory → enforced on
+                next run. Your codebase gets <em>permanently</em> smarter.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 12 — HOW TO GET STARTED
+  ======================== -->
+      <div class="slide" id="slide-11">
+        <div class="max-900 gap-24 stagger">
+          <div class="center">
+            <div class="eyebrow">Get Started</div>
+            <h2>How to <span class="gradient-text">Install Kai</span></h2>
+            <p style="margin-top: 8px">
+              One command. Works with <strong>OpenCode</strong>. That's it.
+            </p>
+          </div>
+
+          <div class="terminal" style="max-width: 780px; margin: 0 auto">
+            <div class="terminal-bar">
+              <div class="terminal-dot td-red"></div>
+              <div class="terminal-dot td-yellow"></div>
+              <div class="terminal-dot td-green"></div>
+              <div class="terminal-title">terminal — kai v1.2.0 installer</div>
+            </div>
+            <!-- prettier-ignore -->
+            <div class="terminal-body"><span class="t-prompt">$</span> <span class="t-cmd">curl -fsSL https://kai.21no.de/scripts/installer.sh | bash -s -- latest --yes</span>
+<span class="t-out">[INFO] Querying GitHub API for latest release...</span>
+<span class="t-out">[INFO] Latest release: v1.2.0</span>
+<span class="t-out">[INFO] Attempting to download kai-1.2.0.zip from BackendStack21/kai releases...</span>
+<span class="t-out">[INFO]   trying: https://github.com/BackendStack21/kai/releases/download/v1.2.0/kai-v1.2.0.zip</span>
+<span class="t-out">100  110k  100  110k    0     0   222k      0 --:--:-- --:--:-- --:--:--  222k</span>
+<span class="t-out">[INFO] Downloaded: kai-v1.2.0.zip</span>
+<span class="t-out">[INFO] Copying agents → /Users/you/.config/opencode/agents</span>
+<span class="t-out">[INFO] Updating opencode.json → setting default agent to 'kai'</span>
+<span class="t-success">✅ Kai agents installed to: ~/.config/opencode/agents</span>
+<span class="t-success">✅ Default agent set to 'kai' in: ~/.config/opencode/opencode.json</span>
+<span class="t-prompt">$</span> <span class="t-cmd"># Done. Open OpenCode and start talking.<span class="blink">_</span></span></div>
+          </div>
+
+          <div
+            class="grid-3"
+            style="width: 100%; max-width: 700px; margin: 0 auto"
+          >
+            <div class="card center gap-8" style="padding: 16px">
+              <div style="font-size: 1.4rem">1️⃣</div>
+              <p style="font-size: 0.78rem">
+                <strong>Run</strong> the installer
+              </p>
+            </div>
+            <div class="card center gap-8" style="padding: 16px">
+              <div style="font-size: 1.4rem">2️⃣</div>
+              <p style="font-size: 0.78rem"><strong>Open</strong> OpenCode</p>
+            </div>
+            <div class="card center gap-8" style="padding: 16px">
+              <div style="font-size: 1.4rem">3️⃣</div>
+              <p style="font-size: 0.78rem"><strong>Talk</strong> to Kai</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================
+       SLIDE 13 — Q&A / FINAL
+  ======================== -->
+      <div class="slide" id="slide-12">
+        <div class="gap-24 center stagger" style="max-width: 700px">
+          <div>
+            <div
+              class="hero-logo"
+              style="
+                box-shadow: 0 0 60px rgba(52, 211, 153, 0.4);
+                background: linear-gradient(135deg, #059669, #34d399);
+              "
+            >
+              🚀
+            </div>
+            <div class="eyebrow">That's a Wrap</div>
+            <h1 style="font-size: clamp(2.2rem, 5vw, 4rem)">
+              Ready to <span class="gradient-text">ship</span> better?
+            </h1>
+          </div>
+
+          <p style="font-size: 1rem; max-width: 500px; color: #94a3b8">
+            Kai is the engineering co-pilot your team deserves.<br />
+            Not just smarter PRs — a fundamentally better way to build software.
+          </p>
+
+          <div class="divider" style="margin: 0 auto"></div>
+
+          <div
+            style="
+              display: flex;
+              gap: 12px;
+              justify-content: center;
+              flex-wrap: wrap;
+            "
+          >
+            <a href="https://kai.21no.de" target="_blank" class="cta-btn"
+              >🤖 Get Kai — kai.21no.de</a
+            >
+          </div>
+
+          <div
+            class="grid-3"
+            style="width: 100%; max-width: 600px; margin: 0 auto"
+          >
+            <div class="pill" style="justify-content: center">
+              <span class="dot dot-green"></span> Free to use
+            </div>
+            <div class="pill" style="justify-content: center">
+              <span class="dot dot-purple"></span> OpenCode native
+            </div>
+            <div class="pill" style="justify-content: center">
+              <span class="dot dot-amber"></span> Built by 21no.de
+            </div>
+          </div>
+
+          <p style="font-size: 0.8rem; color: var(--muted)">
+            💬 Questions? Hit me up. I'm literally right here and I don't sleep.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- END DECK -->
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>
+        ←
+      </button>
+      <div class="nav-dots" id="navDots"></div>
+      <span class="slide-counter" id="slideCounter">1 / 13</span>
+      <button class="nav-btn" id="nextBtn" onclick="navigate(1)">→</button>
+    </nav>
+
+    <!-- Footer joke — lives outside deck, after nav, isolated -->
+    <p
+      style="
+        position: fixed;
+        bottom: 9px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.6rem;
+        color: #252530;
+        font-family: &quot;Fira Code&quot;, monospace;
+        z-index: 50;
+        letter-spacing: 0.04em;
+        pointer-events: auto;
+        transition: color 0.4s;
+      "
+      onmouseover="this.style.color = '#6b7280'"
+      onmouseout="this.style.color = '#252530'"
+      title="No humans were harmed in the making of this deck"
+    >
+      made with &#10084; by Kai &mdash; yes, the AI wrote its own sales pitch.
+      it went well.
+    </p>
+
+    <script>
+      /* ============================
+     SLIDE ENGINE
+  ============================ */
+      const slides = document.querySelectorAll(".slide");
+      const totalSlides = slides.length;
+      let current = 0;
+      let isAnimating = false;
+
+      // Build dots
+      const dotsContainer = document.getElementById("navDots");
+      slides.forEach((_, i) => {
+        const dot = document.createElement("div");
+        dot.className = "nav-dot" + (i === 0 ? " active" : "");
+        dot.onclick = () => goTo(i);
+        dotsContainer.appendChild(dot);
+      });
+
+      function goTo(n) {
+        if (isAnimating || n === current || n < 0 || n >= totalSlides) return;
+        isAnimating = true;
+
+        const dir = n > current ? 1 : -1;
+        const prev = current;
+        current = n;
+
+        // Exit old slide
+        slides[prev].classList.add("exit");
+        slides[prev].classList.remove("active");
+        setTimeout(() => {
+          slides[prev].classList.remove("exit");
+          slides[prev].style.transform = `translateX(${dir * 80}px)`;
+          setTimeout(() => {
+            slides[prev].style.transform = "";
+          }, 50);
+        }, 400);
+
+        // Enter new slide
+        slides[current].style.transform = `translateX(${dir * 80}px)`;
+        slides[current].style.opacity = "0";
+        setTimeout(() => {
+          slides[current].classList.add("active");
+          slides[current].style.transform = "";
+          slides[current].style.opacity = "";
+          isAnimating = false;
+        }, 50);
+
+        // Update nav
+        document.querySelectorAll(".nav-dot").forEach((d, i) => {
+          d.classList.toggle("active", i === current);
+        });
+        document.getElementById("slideCounter").textContent =
+          `${current + 1} / ${totalSlides}`;
+        document.getElementById("prevBtn").disabled = current === 0;
+        document.getElementById("nextBtn").disabled =
+          current === totalSlides - 1;
+      }
+
+      function navigate(dir) {
+        goTo(current + dir);
+      }
+
+      // Keyboard navigation
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " ") {
+          e.preventDefault();
+          navigate(1);
+        }
+        if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+          e.preventDefault();
+          navigate(-1);
+        }
+      });
+
+      // Touch/swipe
+      let touchStartX = 0;
+      document.addEventListener("touchstart", (e) => {
+        touchStartX = e.touches[0].clientX;
+      });
+      document.addEventListener("touchend", (e) => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) navigate(diff > 0 ? 1 : -1);
+      });
+
+      /* ============================
+     INTERACTIVE Q&A
+  ============================ */
+      function toggleQ(el, answer) {
+        if (el.classList.contains("open")) {
+          el.classList.remove("open");
+          el.querySelector(".answer").textContent = "";
+        } else {
+          document.querySelectorAll(".interactive-q.open").forEach((q) => {
+            q.classList.remove("open");
+            q.querySelector(".answer").textContent = "";
+          });
+          el.classList.add("open");
+          const answerEl = el.querySelector(".answer");
+          typeText(answerEl, "→ " + answer, 12);
+        }
+      }
+
+      function typeText(el, text, speed) {
+        el.textContent = "";
+        let i = 0;
+        const t = setInterval(() => {
+          el.textContent += text[i];
+          i++;
+          if (i >= text.length) clearInterval(t);
+        }, speed);
+      }
+
+      /* ============================
+     LIVE DEMO
+  ============================ */
+      const kaiResponses = {
+        default: (q) => {
+          const lower = q.toLowerCase();
+          if (
+            lower.includes("secur") ||
+            lower.includes("auth") ||
+            lower.includes("vulnerab")
+          )
+            return `→ Classifying: security audit request\n→ Routing to @security-auditor\n→ Running OWASP Top 10 checklist...\n→ Static analysis: scanning for injection, auth bypass, secrets...\n→ 0 CRITICAL | 2 HIGH | 4 MEDIUM found\n→ Report generated with specific line:col references and fixes\n→ Status: BLOCKED (HIGH issues require remediation before proceeding)`;
+          if (lower.includes("test") || lower.includes("cover"))
+            return `→ Classifying: testing request\n→ Routing to @tester\n→ Analyzing codebase: TypeScript, Bun test runner detected\n→ Generating test strategy: unit + integration\n→ Writing test cases: happy path, edge cases, error conditions\n→ Running: bun test --coverage\n→ Results: 127 tests, 127 pass (100%) | Coverage: 86%\n→ Status: COMPLETE ✓`;
+          if (
+            lower.includes("deploy") ||
+            lower.includes("docker") ||
+            lower.includes("ci")
+          )
+            return `→ Classifying: DevOps request\n→ Routing to @devops\n→ Analyzing project structure...\n→ Generating: Dockerfile (multi-stage, non-root user, healthcheck)\n→ Generating: docker-compose.yml\n→ Generating: .github/workflows/ci.yml (lint → test → build → deploy)\n→ Security: non-root containers, resource limits, secret management\n→ Status: COMPLETE ✓`;
+          if (
+            lower.includes("refactor") ||
+            lower.includes("debt") ||
+            lower.includes("clean")
+          )
+            return `→ Classifying: code health scan\n→ Routing to @refactor-advisor\n→ Scanning for complexity hotspots...\n→ Found: 3 P1 items | 7 P2 items | 12 P3 items\n→ Highest risk: UserController (cyclomatic: 31, 0 tests)\n→ Dead code: ~420 LOC in legacy handlers\n→ Tech debt register written to .kai/tech-debt/register.md\n→ Estimated remediation: ~18 hours`;
+          return `→ Classifying: "${q}"\n→ Analyzing request complexity...\n→ Routing to appropriate specialist agent...\n→ Running pre-flight checks from .kai/memory.yaml...\n→ Loading project conventions...\n→ Initiating task...\n\n(This is a slide demo — in real OpenCode, I'd actually do the work.)`;
+        },
+      };
+
+      function runDemo() {
+        const input = document.getElementById("demoInput");
+        const output = document.getElementById("demoOutput");
+        const q = input.value.trim();
+        if (!q) return;
+
+        output.style.display = "block";
+        output.textContent = "";
+        const response = kaiResponses.default(q);
+        typeText(output, response, 14);
+      }
+
+      document.getElementById("demoInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.stopPropagation();
+          runDemo();
+        }
+      });
+
+      /* ============================
+     CONFETTI on slide 1 click
+  ============================ */
+      let confettiFired = false;
+      document.getElementById("slide-0").addEventListener("click", () => {
+        if (confettiFired) return;
+        confettiFired = true;
+        const colors = [
+          "#7c6dfa",
+          "#34d399",
+          "#f59e0b",
+          "#fb7185",
+          "#60a5fa",
+          "#a78bfa",
+        ];
+        for (let i = 0; i < 40; i++) {
+          const el = document.createElement("div");
+          el.className = "confetti-piece";
+          el.style.cssText = `
+        left: ${Math.random() * 100}vw;
+        top: -10px;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        animation-delay: ${Math.random() * 2}s;
+        animation-duration: ${3 + Math.random() * 3}s;
+        width: ${6 + Math.random() * 8}px;
+        height: ${6 + Math.random() * 8}px;
+      `;
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 7000);
+        }
+      });
+    </script>
+  </body>
+</html>
