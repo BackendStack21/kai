@@ -1,6 +1,6 @@
 # Kai: The Universal Brain
 
-**Version:** 1.2.0
+**Version:** 1.2.1
 
 ## 1. Overview & Vision
 
@@ -154,6 +154,7 @@ Kai uses a classification matrix to route requests.
 | **Engineering**       | New features, refactoring, system design.                 | `@engineering-team` (Pipeline) |
 | **Failure Analysis**  | "What went wrong?", post-failure investigation.           | `@postmortem`                  |
 | **Code Health**       | "What's the health?", tech debt scan, refactoring advice. | `@refactor-advisor`            |
+| **Ticket Creation**   | "Create a ticket", "spec this out", Jira ticket writing   | `@jira-writer`                 |
 
 ### The Engineering Pipeline
 
@@ -666,28 +667,29 @@ PIPELINE HEALTH DASHBOARD (Conceptual)
 
 ### Subagent Roster
 
-| Agent                     | Type       | Description                          | Target Time | Max Time |
-| :------------------------ | :--------- | :----------------------------------- | :---------- | :------- |
-| `@engineering-team`       | Pipeline   | Software delivery orchestration      | By scope    | By scope |
-| `@architect`              | Specialist | System design & specs                | < 10 min    | 20 min   |
-| `@developer`              | Specialist | Coding & implementation              | < 30 min    | 60 min   |
-| `@reviewer`               | Specialist | Security & quality audit             | < 15 min    | 30 min   |
-| `@tester`                 | Specialist | Test automation & QA                 | < 20 min    | 45 min   |
-| `@docs`                   | Specialist | Technical writing                    | < 20 min    | 45 min   |
-| `@devops`                 | Specialist | CI/CD & Infrastructure               | < 30 min    | 60 min   |
-| `@security-auditor`       | Quality    | Security vulnerability scanning      | < 18 min    | 30 min   |
-| `@performance-optimizer`  | Quality    | Performance analysis & optimization  | < 19 min    | 35 min   |
-| `@integration-specialist` | Quality    | API design & stub generation         | < 18 min    | 35 min   |
-| `@accessibility-expert`   | Quality    | WCAG compliance & accessibility      | < 15 min    | 30 min   |
-| `@research`               | Research   | Deep-dive investigation              | Variable    | Variable |
-| `@fact-check`             | Research   | Claim verification                   | < 15 min    | 30 min   |
-| `@explorer`               | Fast-Track | Codebase exploration & navigation    | < 5 min     | 7 min    |
-| `@quick-reviewer`         | Fast-Track | Small code reviews                   | < 5 min     | 7 min    |
-| `@doc-fixer`              | Fast-Track | Documentation fixes                  | < 5 min     | 7 min    |
-| `@dependency-manager`     | Fast-Track | Package updates                      | < 10 min    | 15 min   |
-| `@postmortem`             | Learning   | Failure analysis & prevention rules  | < 5 min     | 10 min   |
-| `@refactor-advisor`       | Learning   | Tech debt detection & health scoring | < 9 min     | 15 min   |
-| `@executive-summarizer`   | Utility    | Leadership briefings                 | < 5 min     | 7 min    |
+| Agent                     | Type       | Description                                                              | Target Time | Max Time |
+| :------------------------ | :--------- | :----------------------------------------------------------------------- | :---------- | :------- |
+| `@engineering-team`       | Pipeline   | Software delivery orchestration                                          | By scope    | By scope |
+| `@architect`              | Specialist | System design & specs                                                    | < 10 min    | 20 min   |
+| `@developer`              | Specialist | Coding & implementation                                                  | < 30 min    | 60 min   |
+| `@reviewer`               | Specialist | Security & quality audit                                                 | < 15 min    | 30 min   |
+| `@tester`                 | Specialist | Test automation & QA                                                     | < 20 min    | 45 min   |
+| `@docs`                   | Specialist | Technical writing                                                        | < 20 min    | 45 min   |
+| `@devops`                 | Specialist | CI/CD & Infrastructure                                                   | < 30 min    | 60 min   |
+| `@security-auditor`       | Quality    | Security vulnerability scanning                                          | < 18 min    | 30 min   |
+| `@performance-optimizer`  | Quality    | Performance analysis & optimization                                      | < 19 min    | 35 min   |
+| `@integration-specialist` | Quality    | API design & stub generation                                             | < 18 min    | 35 min   |
+| `@accessibility-expert`   | Quality    | WCAG compliance & accessibility                                          | < 15 min    | 30 min   |
+| `@research`               | Research   | Deep-dive investigation                                                  | Variable    | Variable |
+| `@fact-check`             | Research   | Claim verification                                                       | < 15 min    | 30 min   |
+| `@explorer`               | Fast-Track | Codebase exploration & navigation                                        | < 5 min     | 7 min    |
+| `@quick-reviewer`         | Fast-Track | Small code reviews                                                       | < 5 min     | 7 min    |
+| `@doc-fixer`              | Fast-Track | Documentation fixes                                                      | < 5 min     | 7 min    |
+| `@dependency-manager`     | Fast-Track | Package updates                                                          | < 10 min    | 15 min   |
+| `@postmortem`             | Learning   | Failure analysis & prevention rules                                      | < 5 min     | 10 min   |
+| `@refactor-advisor`       | Learning   | Tech debt detection & health scoring                                     | < 9 min     | 15 min   |
+| `@executive-summarizer`   | Utility    | Leadership briefings                                                     | < 5 min     | 7 min    |
+| `@jira-writer`            | Utility    | Creates implementation-ready Jira tickets optimized for AI coding agents | < 15 min    | 25 min   |
 
 ---
 
