@@ -45,7 +45,7 @@ permission:
   webfetch: deny
 ---
 
-# Refactor Advisor Agent v1.0
+# Refactor Advisor Agent v1.2.2
 
 Proactive technical debt detection agent that turns invisible code rot into visible, prioritized action items.
 
@@ -394,5 +394,5 @@ This agent does NOT:
 
 ---
 
-**Version:** 1.0.0  
+**Version:** 1.2.2  
 **Mode:** Subagent

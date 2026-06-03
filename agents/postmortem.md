@@ -45,7 +45,7 @@ permission:
   webfetch: deny
 ---
 
-# Postmortem Agent v1.0
+# Postmortem Agent v1.2.2
 
 Automated failure analysis agent that turns pipeline failures into permanent institutional knowledge.
 
@@ -345,5 +345,5 @@ This agent does NOT:
 
 ---
 
-**Version:** 1.0.0  
+**Version:** 1.2.2  
 **Mode:** Subagent

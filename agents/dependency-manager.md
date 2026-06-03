@@ -62,7 +62,7 @@ permission:
   webfetch: allow
 ---
 
-# Dependency Manager Agent v1.0
+# Dependency Manager Agent v1.2.2
 
 Fast dependency updates, security patches, and compatibility verification (<10 minutes).
 
@@ -449,5 +449,5 @@ Kai expects:
 
 ---
 
-**Version:** 1.2.0  
+**Version:** 1.2.2  
 **Mode:** Subagent

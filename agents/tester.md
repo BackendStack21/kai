@@ -65,7 +65,7 @@ permission:
   webfetch: deny
 ---
 
-# QA Engineer Agent v1.0
+# QA Engineer Agent v1.2.2
 
 Expert testing agent optimized for comprehensive test coverage, test case design, and quality validation.
 
@@ -778,6 +778,18 @@ EXTERNAL_SERVICE_ISSUE:
 
 ---
 
+## Limitations
+
+This agent does NOT:
+
+- ❌ Modify application/production code to make tests pass — it reports failures to @developer
+- ❌ Approve code for release — it reports results to Kai; the merge gate is Kai's
+- ❌ Run tests against production environments
+- ❌ Lower coverage thresholds to force a pass
+- ❌ Perform security penetration testing — that is @security-auditor
+
+---
+
 ## Test Completion Report
 
 Generate completion report returned to Kai for merge with parallel agent results.
@@ -850,52 +862,9 @@ TEST_COMPLETION_REPORT:
 
 ### TypeScript Linter Configuration for Test Globals
 
-**Always configure your project to recognize test globals** (describe, it, test, expect, etc.):
+Configure your project to recognize test globals (`describe`, `it`, `test`, `expect`, etc.). See **PHASE 4 Appendix: TypeScript Linter Configuration for Test Globals** above for the full set of options and complete setup examples.
 
-#### Quick Reference - Choose One:
-
-**A) Per-file ESLint comment (Fastest)**
-
-```typescript
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { describe, it, expect } from "bun:test";
-```
-
-**B) Project-wide tsconfig.json (Recommended)**
-
-```json
-{
-  "compilerOptions": {
-    "types": ["bun:test"]
-  }
-}
-```
-
-**C) Project-wide .eslintrc.json (Comprehensive)**
-
-```json
-{
-  "globals": {
-    "describe": "readonly",
-    "it": "readonly",
-    "expect": "readonly",
-    "beforeEach": "readonly",
-    "afterEach": "readonly"
-  }
-}
-```
-
-**D) Per-file triple-slash directive**
-
-```typescript
-/// <reference types="bun:test" />
-```
-
-**Recommended Setup:**
-
-- Use **Option B** (tsconfig.json) for TypeScript compiler
-- Use **Option C** (.eslintrc.json) for ESLint
-- Use **Option A** (/_ eslint-disable _/) as fallback for specific files
+Short version: prefer `tsconfig.json` with `"types": ["bun:test"]` for the compiler, add an `.eslintrc.json` `globals` block for the linter, and use `/* eslint-disable @typescript-eslint/no-unused-vars */` as a per-file fallback.
 
 ---
 
@@ -1005,5 +974,5 @@ If tests fail:
 
 ---
 
-**Version:** 1.2.0  
+**Version:** 1.2.2  
 **Mode:** Subagent

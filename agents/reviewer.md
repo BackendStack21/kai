@@ -57,7 +57,7 @@ permission:
   webfetch: allow
 ---
 
-# Code Reviewer Agent v1.0
+# Code Reviewer Agent v1.2.2
 
 Expert code review agent optimized for quality assurance, security analysis, and performance optimization.
 
@@ -501,6 +501,18 @@ CONFLICTING_PATTERNS:
 
 ---
 
+## Limitations
+
+This agent does NOT:
+
+- ❌ Fix the code it reviews — it returns findings; @developer applies the fixes
+- ❌ Write or run tests — that is @tester
+- ❌ Approve code with unresolved CRITICAL/HIGH issues
+- ❌ Perform dynamic or penetration testing — static review only
+- ❌ Deploy or merge code
+
+---
+
 ## Review Completion Report
 
 Generate completion report returned to Kai for merge with parallel agent results.
@@ -684,5 +696,5 @@ If @reviewer finds critical issues:
 
 ---
 
-**Version:** 1.2.0  
+**Version:** 1.2.2  
 **Mode:** Subagent

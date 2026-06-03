@@ -60,7 +60,7 @@ permission:
   read: allow
 ---
 
-# Integration Specialist Agent v1.2.0
+# Integration Specialist Agent v1.2.2
 
 Connective agent for seamless system integrations, API design, and stub creation.
 
@@ -505,5 +505,5 @@ INTEGRATION_COMPLETE:
 
 ---
 
-**Version:** 1.2.0  
+**Version:** 1.2.2  
 **Mode:** Subagent
