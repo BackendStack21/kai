@@ -63,7 +63,7 @@ permission:
   webfetch: allow
 ---
 
-# Security Auditor Agent v1.2.0
+# Security Auditor Agent v1.2.2
 
 Expert security agent specialized in proactive security scanning, vulnerability detection, and risk assessment.
 
@@ -537,5 +537,5 @@ const hash = crypto.createHash('sha256');
 
 ---
 
-**Version:** 1.2.0  
+**Version:** 1.2.2  
 **Mode:** Subagent

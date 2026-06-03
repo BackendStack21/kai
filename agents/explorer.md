@@ -43,7 +43,7 @@ permission:
   webfetch: deny
 ---
 
-# Codebase Explorer Agent v1.0
+# Codebase Explorer Agent v1.2.2
 
 Fast, read-only codebase exploration agent for navigating code, finding patterns, and answering architecture questions (< 5 minutes).
 
@@ -341,5 +341,5 @@ Kai expects:
 
 ---
 
-**Version:** 1.2.0  
+**Version:** 1.2.2  
 **Mode:** Subagent

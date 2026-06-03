@@ -1,7 +1,7 @@
 # Makefile for Kai project
 # Provides test targets to run integration tests
 
-.PHONY: test test-preflight test-main test-all clean
+.PHONY: test test-preflight test-main test-all lint-agents clean
 
 test: test-preflight test-main
 
@@ -16,9 +16,13 @@ test-main:
 	  echo "Docker Compose not found. Install Docker Compose and try again."; exit 1; \
 	fi'
 
-test-preflight:
+test-preflight: lint-agents
 	@echo "Running preflight checks..."
 	@bash -lc 'bash tests/check_executables.sh'
+
+lint-agents:
+	@echo "Linting agent definitions..."
+	@bash -lc 'bash tests/check_agents.sh'
 
 test-all: test-main
 	@echo ""

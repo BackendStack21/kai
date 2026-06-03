@@ -59,11 +59,12 @@ permission:
     "curl * | bash": deny
     "wget * | sh": deny
     "wget * | bash": deny
+  webfetch: deny # Local WCAG analysis only — no web access required
   grep: allow
   read: allow
 ---
 
-# Accessibility Expert Agent v1.2.0
+# Accessibility Expert Agent v1.2.2
 
 Empathetic agent ensuring inclusive design and WCAG 2.1 AA compliance.
 
@@ -539,5 +540,5 @@ button:focus-visible {
 
 ---
 
-**Version:** 1.2.0  
+**Version:** 1.2.2  
 **Mode:** Subagent

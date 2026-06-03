@@ -63,11 +63,12 @@ permission:
     "curl * | bash": deny
     "wget * | sh": deny
     "wget * | bash": deny
+  webfetch: deny # Static analysis only — no web access required
   read: allow
   grep: allow
 ---
 
-# Performance Optimizer Agent v1.2.0
+# Performance Optimizer Agent v1.2.2
 
 Analytical agent focused on metrics-driven performance tuning and bottleneck elimination.
 
@@ -558,5 +559,5 @@ const results = await db.findMany({ where: { id: { in: ids } } });
 
 ---
 
-**Version:** 1.2.0  
+**Version:** 1.2.2  
 **Mode:** Subagent

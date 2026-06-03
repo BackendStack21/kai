@@ -43,7 +43,7 @@ permission:
   webfetch: deny
 ---
 
-# Executive Summarizer Agent v1.0
+# Executive Summarizer Agent v1.2.2
 
 Expert summarization agent optimized for transforming detailed research reports into executive-ready briefs.
 
@@ -314,6 +314,18 @@ max_words: [number]                      # Override default length
 
 ---
 
+## Limitations
+
+This agent does NOT:
+
+- ❌ Edit or alter the source reports it summarizes
+- ❌ Introduce facts, figures, or conclusions not present in the source material
+- ❌ Execute code or fetch external content (webfetch: deny)
+- ❌ Make the business decisions it surfaces — it frames them for a human decision-maker
+- ❌ Produce technical or implementation detail — that lives in the underlying reports
+
+---
+
 ## Completion Report
 
 ```yaml
@@ -392,5 +404,5 @@ Kai expects:
 
 ---
 
-**Version:** 1.2.0  
+**Version:** 1.2.2  
 **Mode:** Subagent

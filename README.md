@@ -1,6 +1,6 @@
 # Kai: The Universal Brain
 
-**Version:** 1.2.1
+**Version:** 1.2.2
 
 ## 1. Overview & Vision
 
@@ -40,17 +40,17 @@ curl -fsSL https://kai.21no.de/scripts/installer.sh | bash -s -- latest --yes
 
 ```bash
 # Download and run the installer (replace latest with desired version)
-curl -fsSL https://kai.21no.de/scripts/installer.sh | bash -s -- v1.1.1 --yes
+curl -fsSL https://kai.21no.de/scripts/installer.sh | bash -s -- v1.2.2 --yes
 ```
 
 **If you don't have OpenCode installed yet:**
 
 ```bash
 # The installer can install OpenCode for you
-curl -fsSL https://kai.21no.de/scripts/installer.sh | bash -s -- v1.1.1 --install-opencode --yes
+curl -fsSL https://kai.21no.de/scripts/installer.sh | bash -s -- v1.2.2 --install-opencode --yes
 ```
 
-> **Note:** Replace `v1.1.1` with the desired [release version](https://github.com/BackendStack21/kai/releases). The version can be specified with or without the `v` prefix (e.g., `v1.1.1` or `1.0.0`).
+> **Note:** Replace `v1.2.2` with the desired [release version](https://github.com/BackendStack21/kai/releases). The version can be specified with or without the `v` prefix (e.g., `v1.2.2` or `1.0.0`).
 
 **Installer Options:**
 
@@ -695,18 +695,25 @@ PIPELINE HEALTH DASHBOARD (Conceptual)
 
 ## 13. Versioning
 
-Each agent file uses semantic versioning independently. The ecosystem version is tracked in this README.
+All agent files are pinned to a single ecosystem version, tracked here in the README and enforced by `make lint-agents`. The H1 title and footer of every agent must match this version.
 
 ```yaml
 VERSIONING:
-  ecosystem_version: "1.2.0"
+  ecosystem_version: "1.2.2"
   strategy: "Semantic versioning (MAJOR.MINOR.PATCH)"
-  scope: "Per-agent + ecosystem-level"
+  scope: "Ecosystem-level — all agents share one version"
 
   when_to_bump:
     MAJOR: "Breaking changes to handoff schema or agent interface"
     MINOR: "New capabilities, new agents, new sections"
     PATCH: "Bug fixes, typo corrections, clarifications"
+
+  v1.2.2_changes:
+    - "Standardized version across all agents (H1 titles + footers) — fixed drift to 1.0.x/1.1.x"
+    - "Added explicit `webfetch: deny` to @performance-optimizer and @accessibility-expert"
+    - "Added `## Limitations` section to all agents missing one"
+    - "De-duplicated the TypeScript linter configuration in @tester"
+    - "Added `make lint-agents` guard to enforce deny-list, webfetch, version, and Limitations consistency"
 
   v1.2.0_changes:
     - "Expanded Quality Agents: @security-auditor, @performance-optimizer, @integration-specialist, @accessibility-expert"
